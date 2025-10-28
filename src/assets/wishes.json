@@ -1,0 +1,12 @@
+[
+  { "wishListText": "Learn Angular!", "isComplete": false },
+  { "wishListText": "Build a portfolio", "isComplete": false },
+  { "wishListText": "Read a TypeScript book", "isComplete": false },
+  { "wishListText": "Contribute to open source", "isComplete": false },
+  { "wishListText": "Create a personal website", "isComplete": true },
+  { "wishListText": "Master RxJS", "isComplete": false },
+  { "wishListText": "Write unit tests", "isComplete": false },
+  { "wishListText": "Explore Angular Standalone Components", "isComplete": false },
+  { "wishListText": "Deploy an Angular app", "isComplete": false },
+  { "wishListText": "Join a developer community", "isComplete": true }
+]

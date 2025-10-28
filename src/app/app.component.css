@@ -1,0 +1,25 @@
+.navbar {
+  border-radius: 0.5rem;
+}
+
+.navbar-brand {
+  letter-spacing: 2px;
+}
+
+.nav-link.active, .nav-link:focus, .nav-link:hover {
+  font-weight: bold;
+  color: #fff !important;
+  background: rgba(255,255,255,0.1);
+  border-radius: 0.25rem;
+}
+
+.btn-link.nav-link {
+  color: #fff;
+  text-decoration: underline;
+}
+
+/* Add equal spacing between nav links */
+.navbar-nav .nav-item {
+  margin-left: 1rem;
+  margin-right: 1rem;
+}

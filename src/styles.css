@@ -1,0 +1,1164 @@
+
+.btn-modern-dark {
+  color: #fff;
+  background-color: #343a40;
+  border-color: #23272b;
+}
+.btn-modern-dark:hover,
+.btn-modern-dark:focus {
+  color: #fff; /* <-- Add this line */
+  background-color: #23272b;
+  border-color: #1d2124;
+}
+
+.btn-modern-dark {
+  color: #fff;
+  background-color: #343a40;
+  border-color: #23272b;
+}
+.btn-modern-dark:hover, .btn-modern-dark:focus {
+  background-color: #23272b;
+  border-color: #1d2124;
+}
+
+.btn-modern1 {
+  color: #fff;
+  background: linear-gradient(90deg, #7f53ac 0%, #647dee 100%);
+  border: none;
+}
+.btn-modern1:hover {
+  background: linear-gradient(90deg, #647dee 0%, #7f53ac 100%);
+}
+
+.btn-modern {
+  color: #fff;
+  background: linear-gradient(90deg, #7f53ac 0%, #647dee 100%);
+  border: none;
+  transition: background 0.3s;
+}
+.btn-modern:hover, .btn-modern:focus {
+  color: #fff;
+  background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%);
+}
+
+.btn-indigo {
+  color: #fff;
+  background-color: #303f9f;
+  border-color: #303f9f;
+}
+.btn-indigo:hover, .btn-indigo:focus {
+  background-color: #1a237e;
+  border-color: #1a237e;
+}
+
+.btn-outline-modern {
+  color: hsl(190, 79%, 46%);
+  border-color: #19d2cc;
+  background-color: rgb(255, 255, 255);
+  transition: background 0.2s, color 0.2s;
+}
+.btn-outline-modern:hover,
+.btn-outline-modern:focus {
+  color: #fff;
+  background-color: #19d2b3;
+  border-color: #d21966;
+}
+
+/* CSS */.button-29 {
+  align-items: center;
+  appearance: none;
+  background-image: radial-gradient(100% 100% at 100% 0, #7ad59d 0, #5468ff 100%);
+  border: 0;
+  border-radius: 6px;
+  box-shadow: rgba(45, 35, 66, .4) 0 2px 4px,rgba(45, 35, 66, .3) 0 7px 13px -3px,rgba(58, 65, 111, .5) 0 -3px 0 inset;
+  box-sizing: border-box;
+  color: #fff;
+  cursor: pointer;
+  display: inline-flex;
+  font-family: "JetBrains Mono",monospace;
+  height: 32px;              /* Reduced from 48px */
+  padding-left: 8px;         /* Reduced from 16px */
+  padding-right: 8px;        /* Reduced from 16px */
+  font-size: 14px;           /* Reduced from 18px */
+  line-height: 1.1;
+  justify-content: center;
+  list-style: none;
+  overflow: hidden;
+  position: relative;
+  text-align: left;
+  text-decoration: none;
+  transition: box-shadow .15s,transform .15s;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  white-space: nowrap;
+  will-change: box-shadow,transform;
+}
+
+.button-29:focus {
+  box-shadow: #3c4fe0 0 0 0 1.5px inset, rgba(45, 35, 66, .4) 0 2px 4px, rgba(45, 35, 66, .3) 0 7px 13px -3px, #3c4fe0 0 -3px 0 inset;
+}
+
+.button-29:hover {
+  box-shadow: rgba(45, 35, 66, .4) 0 4px 8px, rgba(45, 35, 66, .3) 0 7px 13px -3px, #3c4fe0 0 -3px 0 inset;
+  transform: translateY(-2px);
+}
+
+.button-29:active {
+  box-shadow: #3c4fe0 0 3px 7px inset;
+  transform: translateY(2px);
+}
+
+/* CSS */
+.button-85 {
+  padding: 0.6em 2em;
+  border: none;
+  outline: none;
+  color: rgb(255, 255, 255);
+  background: #111;
+  cursor: pointer;
+  position: relative;
+  z-index: 0;
+  border-radius: 10px;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.button-85:before {
+  content: "";
+  background: linear-gradient(
+    45deg,
+    #ff0000,
+    #ff7300,
+    #fffb00,
+    #48ff00,
+    #00ffd5,
+    #002bff,
+    #7a00ff,
+    #ff00c8,
+    #ff0000
+  );
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  background-size: 400%;
+  z-index: -1;
+  filter: blur(5px);
+  -webkit-filter: blur(5px);
+  width: calc(100% + 4px);
+  height: calc(100% + 4px);
+  animation: glowing-button-85 20s linear infinite;
+  transition: opacity 0.3s ease-in-out;
+  border-radius: 10px;
+}
+
+@keyframes glowing-button-85 {
+  0% {
+    background-position: 0 0;
+  }
+  50% {
+    background-position: 400% 0;
+  }
+  100% {
+    background-position: 0 0;
+  }
+}
+
+.button-85:after {
+  z-index: -1;
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #365b54;
+  left: 0;
+  top: 0;
+  border-radius: 10px;
+}
+
+
+.button-85:hover {
+  box-shadow: rgba(45, 35, 66, .4) 0 4px 8px, rgba(45, 35, 66, .3) 0 7px 13px -3px, #3c4fe0 0 -3px 0 inset;
+  transform: translateY(-2px);
+  color:#ffff
+}
+
+/* Glowing Select/Control to match .button-85 */
+.select-85, .input-85 {
+  position: relative;
+  z-index: 0;
+  color: #fff;
+  background: #111;
+  border: none;
+  border-radius: 10px;
+  padding: 0.6em 2em 0.6em 1em;
+  font-size: 1em;
+  outline: none;
+  box-shadow: none;
+  transition: box-shadow 0.2s, background 0.2s;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  appearance: none;
+}
+
+.select-85:before, .input-85:before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  width: calc(100% + 4px);
+  height: calc(100% + 4px);
+  background: linear-gradient(
+    45deg,
+    #ff0000,
+    #ff7300,
+    #fffb00,
+    #48ff00,
+    #00ffd5,
+    #002bff,
+    #7a00ff,
+    #ff00c8,
+    #ff0000
+  );
+  background-size: 400%;
+  filter: blur(5px);
+  z-index: -1;
+  border-radius: 12px;
+  animation: glowing-button-85 20s linear infinite;
+  transition: opacity 0.3s ease-in-out;
+  pointer-events: none;
+}
+
+.select-85:after, .input-85:after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #365b54;
+  left: 0;
+  top: 0;
+  border-radius: 10px;
+  z-index: -2;
+  pointer-events: none;
+}
+
+/* Remove default arrow for select and add a custom one */
+.select-85 {
+  background-image: url("data:image/svg+xml;utf8,<svg fill='white' height='16' viewBox='0 0 20 20' width='16' xmlns='http://www.w3.org/2000/svg'><path d='M7.293 7.293a1 1 0 011.414 0L10 8.586l1.293-1.293a1 1 0 111.414 1.414l-2 2a1 1 0 01-1.414 0l-2-2a1 1 0 010-1.414z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 1em center;
+  background-size: 1em;
+  padding-right: 2.5em;
+}
+
+
+@keyframes glowing-select-85 {
+  0% {
+    background-position: 0 0;
+  }
+  50% {
+    background-position: 400% 0;
+  }
+  100% {
+    background-position: 0 0;
+  }
+}
+
+
+/* Optional: On focus, add a subtle shadow */
+.select-85:focus, .input-85:focus {
+  box-shadow: 0 0 0 2px #48ff00, 0 0 8px #48ff00;
+}
+
+/* For input[type="text"], input[type="number"], etc. */
+input.input-85 {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Keyframes for glowing effect (reuse from .button-85) */
+@keyframes glowing-button-85 {
+  0% {
+    background-position: 0 0;
+  }
+  50% {
+    background-position: 400% 0;
+  }
+  100% {
+    background-position: 0 0;
+  }
+}
+/* CSS */
+.button-91 {
+  color: #fff;
+  padding: 10px 20px;
+  background-color:#0d7684;
+  background-image: radial-gradient(93% 87% at 87% 89%, rgba(0, 0, 0, 0.23) 0%, transparent 86.18%), radial-gradient(66% 66% at 26% 20%, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0) 69.79%, rgba(255, 255, 255, 0) 100%);
+  box-shadow: inset -3px -3px 9px rgba(255, 255, 255, 0.25), inset 0px 3px 9px rgba(255, 255, 255, 0.3), inset 0px 1px 1px rgba(255, 255, 255, 0.6), inset 0px -8px 36px rgba(0, 0, 0, 0.3), inset 0px 1px 5px rgba(255, 255, 255, 0.6), 2px 19px 31px rgba(0, 0, 0, 0.2);
+  border-radius: 14px;
+  font-weight: bold;
+  font-size: 12px;
+
+  border: 0;
+
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+
+  cursor: pointer;
+}
+
+/* CSS */
+.button-64 {
+  align-items: center;
+  background-image: linear-gradient(144deg,#AF40FF, #5B42F3 50%,#00DDEB);
+  border: 0;
+  border-radius: 8px;
+  box-shadow: rgba(151, 65, 252, 0.2) 0 15px 30px -5px;
+  box-sizing: border-box;
+  color: #FFFFFF;
+  display: flex;
+  font-family: Phantomsans, sans-serif;
+  font-size: 20px;
+  justify-content: center;
+  line-height: 1em;
+  max-width: 100%;
+  min-width: 140px;
+  padding: 3px;
+  text-decoration: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.button-64:active,
+.button-64:hover {
+  outline: 0;
+}
+
+.button-64 span {
+  background-color: rgb(5, 6, 45);
+  padding: 16px 24px;
+  border-radius: 6px;
+  width: 100%;
+  height: 100%;
+  transition: 300ms;
+}
+
+.button-64:hover span {
+  background: none;
+}
+
+@media (min-width: 300px) {
+  .button-64 {
+    font-size: 12px;
+    min-width: 300px;
+  }
+}
+
+
+
+
+
+
+/* ".inherited-styles-for-exported-element" is a generated class for the inherited styles of the exported element, feel free to rename it. */
+
+svg:not(:root).svg-inline--fa {
+  overflow: visible;
+}
+
+.svg-inline--fa {
+  display: inline-block;
+  font-size: inherit;
+  height: 1em;
+  overflow: visible;
+  vertical-align: -.125em;
+}
+
+.inherited-styles-for-exported-element {
+  color: #333;
+  font-family: CerebriSans-Regular, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+  font-size: 100%;
+}
+
+.plan-name, .price, h3 {
+  font-family: CerebriSans-Bold, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+  font-weight: 400;
+}
+
+.button {
+  border-radius: 50px;
+  box-shadow: rgba(0, 12, 32, .04) 0 0 1px 0, rgba(10, 31, 68, .1) 0 3px 4px 0;
+  display: inline-block;
+  height: 50px;
+  line-height: 50px;
+  margin-top: .7em;
+  padding: 0 25px;
+  text-decoration: none;
+  transition: all 250ms ease-in-out;
+  transition-behavior: normal;
+  will-change: transform;
+}
+
+.button-principal {
+  background-color: #2cbc63;
+  border-style: none;
+  color: #000;
+  margin-left: 0;
+}
+
+.button-principal * {
+  pointer-events: none;
+}
+
+.benefits li .fa-check, .button svg {
+  margin-right: .5em;
+}
+
+.button:hover {
+  transform: scale(1.05);
+}
+
+.buy-cta h3, .card {
+  margin-bottom: 0;
+  text-align: center;
+}
+
+.buy-cta h3 {
+  font-size: 1.9em;
+}
+
+.buy-cta {
+  background-color: #f3f3f3;
+  border-radius: 5px;
+  margin-top: 3em;
+  padding: 4% 10% 15%;
+}
+
+.card {
+  background-color: #fff;
+  border-radius: 7px;
+  box-shadow: rgba(0, 0, 0, .1) 0 1px 2px 0;
+  box-sizing: border-box;
+  margin-left: 0;
+  margin-right: 0;
+  padding: 40px;
+  transition: all 350ms;
+  transition-behavior: normal;
+}
+
+.card:hover {
+  box-shadow: rgba(56, 60, 67, .07) 0 0 0 1px, rgba(56, 60, 67, .15) 0 8px 14px 1px;
+}
+
+.buy-cta .card {
+  margin-top: 3em;
+}
+
+.price {
+  color: #333;
+  font-size: 3em;
+  margin: 0 0 .15em;
+}
+
+.price del {
+  color: #2cbc63;
+  vertical-align: middle;
+}
+
+.plan-name {
+  font-size: 1.1em;
+  margin-bottom: 1em;
+}
+
+.toast-offer {
+  background-color: #fef1bd;
+  border-radius: 16px;
+  box-sizing: border-box;
+  color: #000;
+  display: inline-block;
+  font-size: 13px;
+  margin-top: 1.5em;
+  padding: 3px 10px;
+  text-decoration: none;
+  vertical-align: middle;
+}
+
+.card .toast-offer span {
+  color: #000;
+}
+
+.toast-offer:hover span {
+  text-decoration: underline;
+}
+
+.card span {
+  font-size: .9em;
+}
+
+.benefits {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  margin: 1.5em 0;
+  padding: 0;
+  text-align: center;
+}
+
+.benefits li {
+  box-sizing: border-box;
+  line-height: 2.5em;
+  list-style: none;
+}
+
+body > section:not(.buy-cta) {
+  box-sizing: border-box;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 10%;
+  width: 100%;
+}
+
+.credits {
+  max-height: 100px;
+  overflow: auto;
+}
+
+@media screen and (min-width: 768px) {
+  body > section:not(.buy-cta) {
+    max-width: 1050px;
+  }
+
+  .buy-cta {
+    padding-bottom: 4%;
+  }
+
+  .credits {
+    max-height: initial;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+
+  .benefits,   .card {
+    margin-left: 10%;
+    margin-right: 10%;
+  }
+
+  body > section:not(.buy-cta) {
+    box-sizing: initial;
+    width: auto;
+  }
+
+  .buy-cta h3 {
+    font-size: 2.5em;
+  }
+}
+
+.pro {
+  margin: 4em auto 2em;
+  width: 300px;
+}
+
+.pro p {
+  font-size: 13px;
+  margin-bottom: 0;
+  margin-left: 10px;
+  margin-top: 0;
+}
+
+.pro a {
+  color: #000;
+  text-decoration: none;
+}
+
+.border-gradient {
+  background-color: initial;
+  background-image: linear-gradient(135deg, #2af598, #009efd 50%, #2af598);
+  background-size: 250%;
+  border-radius: 10px;
+  display: inline-block;
+  padding: 3px;
+  position: relative;
+  transition: background-position 500ms;
+  transition-behavior: normal;
+  width: 100%;
+}
+
+.pro-container {
+  align-items: center;
+  background-color: #f3f3f3;
+  border-radius: 8px;
+  box-shadow: rgba(0, 0, 0, .2) 0 5px 30px;
+  display: flex;
+  padding: 1%;
+}
+
+.pro:hover .border-gradient {
+  background-position: 100% center;
+}
+
+.credits a {
+  color: #333;
+}
+
+.svg-inline--fa.fa-w-16 {
+  width: 1em;
+}
+
+.svg-inline--fa.fa-w-18 {
+  width: 1.125em;
+}
+
+.leaflet-container {
+  height: 400px !important;
+  width: 100% !important;
+  min-height: 400px !important;
+}
+
+/* ".inherited-styles-for-exported-element" is a generated class for the inherited styles of the exported element, feel free to rename it. */
+
+svg:not(:root).svg-inline--fa {
+  overflow: visible;
+}
+
+.svg-inline--fa {
+  display: inline-block;
+  font-size: inherit;
+  height: 1em;
+  overflow: visible;
+  vertical-align: -.125em;
+}
+
+.inherited-styles-for-exported-element {
+  color: #333;
+  font-family: CerebriSans-Regular, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+  font-size: 100%;
+}
+
+.button {
+  background-color: #fff;
+  border: 1px solid #eee;
+  border-radius: 50px;
+  box-shadow: rgba(0, 12, 32, .04) 0 0 1px 0, rgba(10, 31, 68, .1) 0 3px 4px 0;
+  color: #555;
+  display: inline-block;
+  height: 50px;
+  line-height: 50px;
+  margin-top: .7em;
+  padding: 0 25px;
+  text-decoration: none;
+  transition: all 250ms ease-in-out;
+  transition-behavior: normal;
+  will-change: transform;
+}
+
+.button-principal, .buy-button {
+  background-color: #f1eae5;
+  border-style: none;
+  color: #000;
+  margin-left: 0;
+}
+
+.button-principal * {
+  pointer-events: none;
+}
+
+.button svg {
+  margin-right: .5em;
+}
+
+.button:hover {
+  transform: scale(1.05);
+}
+
+.buttons-wrapper {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+.buttons-wrapper a {
+  flex: 1;
+}
+
+.first-buy-button del {
+  display: none;
+}
+
+@media screen and (min-width: 768px) {
+  .buttons-wrapper {
+    flex-direction: row;
+  }
+
+  .first-buy-button del {
+    display: initial;
+    opacity: .6;
+  }
+
+  .first-buy-button {
+    height: initial;
+    line-height: initial;
+    padding: .8em 25px;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .video-btn {
+    display: none;
+  }
+}
+
+.big-price {
+  font-size: 1.2em;
+}
+
+.svg-inline--fa.fa-w-14 {
+  width: .875em;
+}
+
+.svg-inline--fa.fa-w-18 {
+  width: 1.125em;
+}
+
+.large-profile-photo {
+  width: 300px !important;
+  height: 300px !important;
+  object-fit: cover;
+  box-shadow: 0 0 16px #ccc;
+}
+
+.nav-bar {
+    position: sticky;
+    z-index: 101;
+    left: 0;
+    right: 0;
+    top: 0;
+    display: flex
+;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #0d7684;
+    padding: 0 32px;
+    white-space: nowrap;
+}
+
+/* Style Bootstrap .form-range (input[type=range]) for price slider */
+input[type="range"].form-range {
+  accent-color: #0d7684; /* Modern browsers */
+}
+
+/* For Webkit browsers (Chrome, Safari, Edge) */
+input[type="range"].form-range::-webkit-slider-thumb {
+  background: #0d7684;
+  border: 2px solid #fff;
+}
+input[type="range"].form-range::-webkit-slider-runnable-track {
+  background: #0d7684;
+  height: 6px;
+  border-radius: 3px;
+}
+
+/* For Firefox */
+input[type="range"].form-range::-moz-range-thumb {
+  background: #0d7684;
+  border: 2px solid #fff;
+}
+input[type="range"].form-range::-moz-range-track {
+  background: #0d7684;
+  height: 6px;
+  border-radius: 3px;
+}
+
+/* For IE/Edge */
+input[type="range"].form-range::-ms-thumb {
+  background: #0d7684;
+  border: 2px solid #fff;
+}
+input[type="range"].form-range::-ms-fill-lower,
+input[type="range"].form-range::-ms-fill-upper {
+  background: #0d7684;
+}
+
+/* Remove outline on focus */
+input[type="range"].form-range:focus {
+  outline: none;
+}
+
+.clear-price-filter-link {
+  color: #0d7684 !important;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.clear-price-filter-link:hover,
+.clear-price-filter-link:focus {
+  color: #095a63 !important; /* Slightly darker on hover */
+}
+
+.btn-outline-primary {
+  color: #0d7684 !important;
+  border-color: #0d7684 !important;
+   background-color: #fff !important; /* Make sure background is white for visibility */
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus,
+.btn-outline-primary.active,
+.btn-outline-primary:active {
+  color: #fff !important;
+  background-color: #0d7684 !important;
+  border-color: #0d7684 !important;
+}
+
+/* Tab text when selected */
+.realtor-tab.active,
+.realtor-tab.selected,
+.nav-tabs .nav-link.active {
+  color: #0d7684 !important;
+  border-color: #0d7684 !important;
+}
+
+/* All links in realtor account */
+.realtor-account-link,
+.realtor-account-link:visited {
+  color: #0d7684 !important;
+  text-decoration: underline;
+}
+
+.realtor-account-link:hover,
+.realtor-account-link:focus {
+  color: #095a63 !important;
+  text-decoration: underline;
+}
+
+/* All buttons in realtor account */
+.realtor-account-btn,
+.realtor-account-btn:visited {
+  color: #fff !important;
+  background-color: #0d7684 !important;
+  border-color: #0d7684 !important;
+}
+
+.realtor-account-btn:hover,
+.realtor-account-btn:focus {
+  background-color: #095a63 !important;
+  border-color: #095a63 !important;
+  color: #fff !important;
+}
+
+/* Realtor account tabs */
+.realtor-tab {
+  color: #222 !important; /* Black/dark when not active */
+  background: transparent;
+  border: none;
+}
+.realtor-tab.active,
+.realtor-tab.selected,
+.nav-tabs .nav-link.active {
+  color: #0d7684 !important; /* Your brand color when active */
+  border-color: #0d7684 !important;
+  background: #f8f9fa;
+}
+
+/* Inactive property-details tabs use #095a63 for text */
+.property-details-panel .nav-tabs .nav-link {
+  color: #095a63 !important;
+}
+
+.create-listing-card {
+  max-width: 98vw;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 0 !important;
+  padding: 0 !important;
+}
+
+/* Make the card-header flush with the card and full width, no padding or border radius */
+.create-listing-card .card-header {
+  background-color: #0d7684 !important;
+  color: #fff !important;
+  padding: 0.75rem 0 !important;
+  border-radius: 0 !important;
+  margin: 0 !important;
+}
+
+.create-listing-btn {
+  background-color: #0d7684 !important;
+  color: #fff !important;
+  border-color: #0d7684 !important;
+}
+.create-listing-btn:hover,
+.create-listing-btn:focus {
+  background-color: #095a63 !important;
+  border-color: #095a63 !important;
+  color: #fff !important;
+}
+
+.create-listing-btn,
+button[type="submit"] {
+  width: 70%;
+  height: 60px;
+  font-size: 1.35rem; /* Make button text larger */
+  /* Existing styles... */
+}
+
+button[type="submit"] {
+  background-color: #0d7684 !important;
+  color: #fff !important;
+  border-color: #0d7684 !important;
+}
+button[type="submit"]:hover,
+button[type="submit"]:focus {
+  background-color: #095a63 !important;
+  border-color: #095a63 !important;
+  color: #fff !important;
+}
+.login-btn {
+  width:100%;
+  min-width: 555px;
+  height: 50px;
+  font-size: 1.2rem;
+  margin: 0 auto;
+  display: block;
+}
+.more-filter-apply-btn {
+  background-color: #095a63 !important;
+  color: #fff !important;
+  border-color: #095a63 !important;
+}
+.more-filter-apply-btn:hover,
+.more-filter-apply-btn:focus {
+  background-color: #073f3e !important;
+  border-color: #073f3e !important;
+  color: #fff !important;
+}
+
+/* Bedroom & Bathroom filter selected button color */
+.btn-primary,
+.btn-primary:focus,
+.btn-primary.active,
+.btn-primary:active {
+  background-color: #095a63 !important;
+  border-color: #095a63 !important;
+  color: #fff !important;
+}
+
+/* For a button */
+.clear-all-btn {
+  background-color: #095a63 !important;
+  color: #fff !important;
+  border-color: #095a63 !important;
+}
+.clear-all-btn:hover,
+.clear-all-btn:focus {
+  background-color: #073f3e !important;
+  border-color: #073f3e !important;
+  color: #fff !important;
+}
+
+/* For a link */
+.clear-all-link {
+  color: #095a63 !important;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.clear-all-link:hover,
+.clear-all-link:focus {
+  color: #073f3e !important;
+}
+
+.realtor-info-card {
+  border-radius: 0 !important;
+  margin-bottom: 1.5rem;
+  padding: 0 !important;
+}
+
+.realtor-info-header {
+  background-color: #fff !important;
+  color: #095a63 !important;
+  width: 100% !important;
+  padding: 1.2rem 0 !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  font-weight: bold;
+  font-size: 1.15rem;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.property-details-section .form-control,
+.property-details-section .form-select,
+.property-details-section .input-group-text,
+.property-details-section label,
+.property-details-section .btn,
+.property-details-section .custom-control-label {
+  border-color: #095a63 !important;
+  color: #095a63 !important;
+}
+
+.property-details-section .form-control:focus,
+.property-details-section .form-select:focus {
+  border-color: #095a63 !important;
+  box-shadow: 0 0 0 0.2rem rgba(9,90,99,0.25) !important;
+}
+
+.property-details-section .btn,
+.property-details-section button {
+  background-color: #095a63 !important;
+  color: #fff !important;
+  border-color: #095a63 !important;
+}
+
+.property-details-section .btn:hover,
+.property-details-section button:hover,
+.property-details-section .btn:focus,
+.property-details-section button:focus {
+  background-color: #073f3e !important;
+  border-color: #073f3e !important;
+  color: #fff !important;
+}
+
+/* Make all active property-details tabs use #095a63 */
+.property-details-panel .nav-tabs .nav-link.active,
+.property-details-panel .nav-tabs .nav-link.active:focus,
+.property-details-panel .nav-tabs .nav-link.active:visited {
+  background-color: #095a63 !important;
+  color: #fff !important;
+  border-color: #095a63 #095a63 #fff !important;
+}
+
+/* Optional: Make inactive tabs use #095a63 for text on hover/focus */
+.property-details-panel .nav-tabs .nav-link:not(.active):hover,
+.property-details-panel .nav-tabs .nav-link:not(.active):focus {
+  color: #095a63 !important;
+  border-color: #095a63 !important;
+}
+
+.contact-info-card {
+  border-radius: 0 !important;
+  margin-bottom: 1.5rem;
+  padding: 0 !important;
+   margin-top: 2.5rem !important; /* Add space above Contact Info section */
+}
+
+.contact-info-header {
+  background-color: hwb(80 95% 4%) !important;
+  color: #095a63 !important;
+  width: 100%;
+  padding: 1.2rem 0 !important;   /* Increased vertical padding */
+  margin: 0 !important;
+  border-radius: 0 !important;
+  font-weight: bold;
+  font-size: 1.15rem;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.contact-info-card .card-body {
+   width: 100%;
+  max-width: 100%;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  margin-top: 2.5rem !important;
+}
+
+.contact-info-detail {
+  color: #095a63 !important;
+  font-weight: 500;
+  word-break: break-all;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* User account tabs: inactive tab text color */
+.user-account-tabs .nav-link {
+  color: #095a63 !important;
+}
+
+/* Active tab style (optional, for consistency) */
+.user-account-tabs .nav-link.active {
+  color: #fff !important;
+  background-color: #095a63 !important;
+  border-color: #095a63 !important;
+}
+
+/* Watchlist tabs: active and inactive styles */
+.watchlist-tabs .nav-link {
+  color: #0d7684 !important;
+  background-color: #fff !important;
+}
+
+.watchlist-tabs .nav-link.active {
+  color: #fff !important;
+  background-color: #0d7684 !important;
+  border-color: #0d7684 !important;
+}
+
+/* filepath: /Users/wassimabuzahra/Desktop/env/workspaces/ng/aqarsigma-fornted-jordan/src/styles.css */
+.modal-backdrop-custom {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.4);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal-custom {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 24px rgba(0,0,0,0.2);
+  padding: 2rem;
+  max-width: 600px;
+  width: 100%;
+  z-index: 2100;
+}
+
+/* keep modal footer visible and make modal scrollable when content is large */
+.modal-dialog {
+  max-width: 1000px;
+  margin: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  height: auto;
+}
+
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 40px);
+}
+
+.modal-body {
+  overflow: auto;
+  /* leave enough room for header/footer */
+  max-height: calc(100vh - 200px);
+}
+
+/* Ensure leaflet maps inside modals have a bounded height (override global) */
+.modal .leaflet-container {
+  height: 400px !important;
+  min-height: 300px !important;
+  width: 100% !important;
+}
+
+/* Make the main map taller — adjust calc/min-height as needed */
+#map {
+  width: 100%;
+  height: calc(100vh - 150px) !important; /* adjust to desired size */
+  min-height: 600px !important;
+}
+
+/* ensure parents don't collapse if using flex */
+.map-wrapper, .map-container {
+  width: 100%;
+  height: 100%;
+}
+

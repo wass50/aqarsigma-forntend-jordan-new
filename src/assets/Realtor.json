@@ -1,0 +1,23 @@
+{
+  "id": "1",
+  "firstName": "Jane",
+  "lastName": "Doe",
+  "email": "jane.doe@realestate.com",
+  "phoneNumber": "+1-555-123-4567",
+  "licenseNumber": "REALTOR-987654",
+  "brokerageName": "Dream Homes Realty",
+  "brokerageAddress": "123 Main St, Toronto, ON",
+  "profilePhotoUrl": "https://randomuser.me/api/portraits/women/44.jpg",
+  "username": "janedoe",
+  "passwordHash": "hashedpassword",
+  "role": "realtor",
+  "isActive": true,
+  "createdAt": "2024-07-08T10:00:00Z",
+  "updatedAt": "2024-07-08T10:00:00Z",
+  "bio": "Experienced realtor specializing in Toronto homes.",
+  "websiteUrl": "https://janedoerealty.com",
+  "socialLinks": ["https://twitter.com/janedoe", "https://linkedin.com/in/janedoe"],
+  "listings": ["listing1", "listing2"],
+  "notificationPreferences": { "email": true, "sms": false },
+  "verificationStatus": "verified"
+}

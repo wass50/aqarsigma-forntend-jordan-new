@@ -1,0 +1,52 @@
+.leaflet-popup.popup-active .leaflet-popup-content-wrapper {
+  background: #e6ffe6 !important; /* light green */
+}
+.leaflet-popup.popup-sold .leaflet-popup-content-wrapper {
+  background: #ffe6e6 !important; /* light red */
+}
+.leaflet-popup.popup-delisted .leaflet-popup-content-wrapper {
+  background: #f0f0f0 !important; /* light gray */
+}
+
+/* Use attribute selector for highest specificity */
+div.leaflet-popup-content-wrapper {
+  width: 600px !important;
+  max-width: 650px !important;
+  min-width: 400px !important;
+  box-sizing: border-box;
+  overflow: visible !important;
+  border: 2px solid #1976d2 !important;
+  border-radius: 12px !important;
+  padding: 0 !important;
+}
+
+/* Make sure the content fits inside the wrapper */
+.leaflet-popup-content {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  overflow-x: auto !important;
+  box-sizing: border-box;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.modal-backdrop-custom {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal-custom {
+  background: #fff;
+  border-radius: 8px;
+  padding: 24px;
+  max-width: 1026px;   /* 14% wider than 900px */
+  width: 108.3vw;      /* 14% wider than 95vw */
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+  position: relative;
+}
+

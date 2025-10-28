@@ -1,0 +1,159 @@
+<nav class="navbar navbar-expand-lg navbar-dark nav-bar mb-4 shadow">
+  <div class="container-fluid">
+    <a class="navbar-brand me-3 d-flex align-items-center" href="/">
+      <img src="assets/logo.jpg" alt="HouseSigma" style="height:40px;">
+      <span class="ms-2 fw-bold" style="font-size:1.5rem;">AqarSigma</span>
+    </a>
+    <div class="collapse navbar-collapse" id="mainNavbar">
+      <ul class="navbar-nav small">
+        <li class="nav-item me-3">
+          <select class="form-select" [(ngModel)]="selectedCountry" (change)="onCountryChange($event)">
+            <option value="" disabled selected>
+              {{ language === 'en' ? 'Select Country' : 'اختر الدولة' }}
+            </option>
+            <option value="Jordan">
+              {{ language === 'en' ? 'Jordan' : 'الأردن' }}
+            </option>
+            <option value="UAE">
+              {{ language === 'en' ? 'UAE' : 'الإمارات' }}
+            </option>
+            <option value="SA">
+              {{ language === 'en' ? 'Saudi Arabia' : 'السعودية' }}
+            </option>
+            <option value="Egypt">
+              {{ language === 'en' ? 'Egypt' : 'مصر' }}
+            </option>
+          </select>
+        </li>
+       
+        <li class="nav-item">
+          <a class="nav-link fw-bold text-white px-3 small" routerLink="/Map-Search" routerLinkActive="active">
+            {{ language === 'en' ? 'Map Search' : 'بحث بالخريطة' }}
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link fw-bold text-white px-3 small" routerLink="/housing-company-map-search" routerLinkActive="active">
+            {{ language === 'en' ? 'Housing Map Search' : 'بحث شركات الإسكان بالخريطة' }}
+          </a>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle fw-bold text-white px-3" href="#" id="moreDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            {{ language === 'en' ? 'More' : 'المزيد' }} &raquo;
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="moreDropdown">
+            <li class="nav-item">
+              <a class="dropdown-item" routerLink="/realtors" routerLinkActive="active">
+                {{ language === 'en' ? 'Realtors' : 'الوكلاء العقاريون' }}
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="dropdown-item" routerLink="/housing-companies" routerLinkActive="active">
+                {{ language === 'en' ? 'Housing Companies' : 'شركات الإسكان' }}
+              </a>
+            </li>
+            <!-- Add more overflow links here -->
+          </ul>
+        </li>
+      </ul>
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item" *ngIf="!isLoggedIn">
+          <a class="nav-link fw-bold text-white px-3" routerLink="/login" routerLinkActive="active">
+            {{ language === 'en' ? 'Login' : 'تسجيل الدخول' }}
+          </a>
+        </li>
+        
+      </ul>
+
+
+  <!-- Show simple link for realtor, admin, housing company -->
+  <li class="nav-item" *ngIf="isLoggedIn && userRole !== 'user'">
+    <a class="nav-link fw-bold text-white px-3" [routerLink]="myAccountRoute" routerLinkActive="active">
+      {{ language === 'en' ? 'My Account' : 'حسابي' }}
+    </a>
+  </li>
+
+      
+
+
+  <li class="nav-item dropdown" *ngIf="isLoggedIn && userRole === 'user'">
+    <a class="nav-link dropdown-toggle fw-bold text-white px-3"
+       href="#" id="accountDropdown" role="button"
+       data-bs-toggle="dropdown" aria-expanded="false">
+      {{ language === 'en' ? 'My Account' : 'حسابي' }}
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="accountDropdown">
+      <li>
+        <a class="dropdown-item" href="#" (click)="goToAccount(); $event.preventDefault();">
+          {{ language === 'en' ? 'Account Details' : 'تفاصيل الحساب' }}
+        </a>
+      </li>
+      <li>
+        <a class="dropdown-item" href="#" (click)="goToWatchlist(); $event.preventDefault();">
+          {{ language === 'en' ? 'Watch List' : 'قائمة المتابعة' }}
+        </a>
+      </li>
+      <li>
+        <a class="dropdown-item text-danger" href="#" (click)="logout(); $event.preventDefault();">
+          {{ language === 'en' ? 'Logout' : 'تسجيل الخروج' }}
+        </a>
+      </li>
+    </ul>
+  
+
+
+  </li>
+
+
+      <div class="container-fluid py-2 text-end">
+        <button class="btn btn-outline-primary btn-sm me-2" [class.active]="language === 'en'" (click)="setLanguage('en')">
+          {{ language === 'en' ? 'English' : 'الإنجليزية' }}
+        </button>
+        <button class="btn btn-outline-primary btn-sm" [class.active]="language === 'ar'" (click)="setLanguage('ar')">
+          {{ language === 'en' ? 'Arabic' : 'العربية' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</nav>
+<router-outlet></router-outlet>
+
+<footer class="nav-bar text-light py-2 border-top" style="font-size: 0.95em;">
+  <div class="container-fluid px-3">
+    <div class="d-flex flex-wrap align-items-center justify-content-between">
+      <div class="fw-bold me-3 mb-1" style="white-space:nowrap;">
+        {{ language === 'en' ? 'AqarSigma Inc. Brokerage' : 'شركة عقار سيجما للوساطة' }} &copy; {{ currentYear }}
+      </div>
+      <div class="d-flex flex-wrap gap-2 small">
+        <a routerLink="/about" class="text-light text-decoration-none px-2">
+          {{ language === 'en' ? 'About Us' : 'معلومات عنا' }}
+        </a>
+        <span class="text-secondary">|</span>
+        <a routerLink="/recently-sold" class="text-light text-decoration-none px-2">
+          {{ language === 'en' ? 'Recently Sold Listings' : 'العقارات المباعة حديثاً' }}
+        </a>
+        <span class="text-secondary">|</span>
+        <a routerLink="/careers" class="text-light text-decoration-none px-2">
+          {{ language === 'en' ? 'Careers' : 'الوظائف' }}
+        </a>
+        <span class="text-secondary">|</span>
+        <a routerLink="/faqs" class="text-light text-decoration-none px-2">
+          {{ language === 'en' ? 'FAQs' : 'الأسئلة الشائعة' }}
+        </a>
+        <span class="text-secondary">|</span>
+        <a routerLink="/contact" class="text-light text-decoration-none px-2">
+          {{ language === 'en' ? 'Contact Us' : 'اتصل بنا' }}
+        </a>
+        <span class="text-secondary">|</span>
+        <a routerLink="/privacy" class="text-light text-decoration-none px-2">
+          {{ language === 'en' ? 'Privacy & Security' : 'الخصوصية والأمان' }}
+        </a>
+        <span class="text-secondary">|</span>
+        <a routerLink="/terms" class="text-light text-decoration-none px-2">
+          {{ language === 'en' ? 'Terms & Conditions' : 'الشروط والأحكام' }}
+        </a>
+      </div>
+    </div>
+  </div>
+</footer>

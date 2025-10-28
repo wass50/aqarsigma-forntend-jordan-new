@@ -1,0 +1,402 @@
+<div class="container mt-3" [attr.dir]="language === 'en' ? 'ltr' : 'rtl'">
+  <h4 class="fw-bold mb-3" [ngClass]="{'text-start': language === 'en', 'text-end': language !== 'en'}">
+    {{ language === 'en' ? 'My Watch Lists' : 'قوائم المراقبة الخاصة بي' }}
+  </h4>
+
+  <ul class="nav nav-tabs watchlist-tabs mb-3">
+    <li class="nav-item">
+      <button class="nav-link" [class.active]="activeWatchTab === 'property'" (click)="activeWatchTab = 'property'">
+        {{ language === 'en' ? 'Property Watch List' : 'قائمة مراقبة العقارات' }}
+      </button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" [class.active]="activeWatchTab === 'community'" (click)="activeWatchTab = 'community'">
+        {{ language === 'en' ? 'Community Watch List' : 'قائمة مراقبة الأحياء' }}
+      </button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" [class.active]="activeWatchTab === 'area'" (click)="activeWatchTab = 'area'">
+        {{ language === 'en' ? 'Areas Watch List' : 'قائمة مراقبة المناطق' }}
+      </button>
+    </li>
+  </ul>
+
+  <div [ngSwitch]="activeWatchTab">
+    <!-- Property Watch List Tab -->
+    <div *ngSwitchCase="'property'" class="row">
+      <div class="col-12 d-flex flex-column align-items-end mb-3">
+        <button
+          class="btn btn-primary btn-sm"
+          (click)="openCreateWatchlistModal('property')"
+          [disabled]="propertyWatchLists.length >= 3"
+          [attr.title]="propertyWatchLists.length >= 3 ? (language === 'en' ? 'You can only create up to 3 property watch lists.' : 'يمكنك إنشاء حتى 3 قوائم مراقبة للعقارات فقط.') : null">
+          {{ language === 'en' ? 'Create New Property Watch List' : 'إنشاء قائمة مراقبة عقارات جديدة' }}
+        </button>
+        <div *ngIf="propertyWatchLists.length >= 3" class="text-danger mt-1 small">
+          {{ language === 'en' ? 'You can only create up to 3 property watch lists.' : 'يمكنك إنشاء حتى 3 قوائم مراقبة للعقارات فقط.' }}
+        </div>
+      </div>
+
+      <!-- Show list view if a watchlist is selected -->
+      <div *ngIf="selectedPropertyWatchlist && !selectedProperty">
+        <nav aria-label="breadcrumb" class="mb-3">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+              <a href="#" (click)="onBackToWatchlists(); $event.preventDefault();">
+                {{ language === 'en' ? 'Property Watch List' : 'قائمة مراقبة العقارات' }}
+              </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+              {{ language === 'en' ? 'List View' : 'عرض القائمة' }}
+            </li>
+          </ol>
+        </nav>
+        <app-property-list-view
+          [properties]="selectedPropertyWatchlist.properties"
+          (propertySelected)="onPropertySelected($event)">
+        </app-property-list-view>
+      </div>
+
+      <!-- Show all watchlists if none is selected -->
+      <div *ngIf="!selectedPropertyWatchlist" class="row">
+        <div class="col-md-4 mb-4" *ngFor="let list of propertyWatchLists">
+          <div class="card h-100 shadow-sm" style="cursor:pointer;" (click)="onWatchlistClick(list)">
+            <div class="card-body p-0">
+              <!-- Main photo of first property -->
+              <div *ngIf="list.properties.length > 0">
+                <img
+                  [src]="getPhotoUrl(list.properties[0]?.photos)"
+                  [alt]="language === 'en' ? 'watchlist photo' : 'صورة القائمة'"
+                  style="width:100%; height:180px; object-fit:cover; border-radius:6px 6px 0 0; display:block;">
+              </div>
+              <div *ngIf="list.properties.length === 0" class="bg-light d-flex align-items-center justify-content-center" style="height:180px; border-radius:6px 6px 0 0;">
+                <span class="text-muted">{{ language === 'en' ? 'No properties in this list.' : 'لا توجد عقارات في هذه القائمة.' }}</span>
+              </div>
+              <!-- Watchlist name -->
+              <div class="px-0 pt-2 mb-1 text-dark" [ngClass]="{'text-start': language === 'en', 'text-end': language !== 'en'}" style="font-weight:400;">
+                {{ list.name }}
+              </div>
+              <!-- Number of properties -->
+              <div class="px-0 mb-2 text-secondary" [ngClass]="{'text-start': language === 'en', 'text-end': language !== 'en'}" style="font-size:0.95rem;">
+                {{ language === 'en' ? 'Properties:' : 'العقارات:' }} {{ list.properties.length }}
+              </div>
+              <!-- Remove button -->
+              <div class="d-flex justify-content-end">
+                <button class="btn btn-outline-danger btn-sm mb-2" (click)="softDeleteWatchlist(list); $event.stopPropagation();">
+                  {{ language === 'en' ? 'Remove' : 'إزالة' }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Community Watch List Tab -->
+    <div *ngSwitchCase="'community'" class="row">
+      <!-- Show all community watchlists if none is selected -->
+      
+      
+      
+      
+      
+       <div class="col-12 d-flex flex-column align-items-end mb-3">
+        <button
+          class="btn btn-primary btn-sm"
+          (click)="openCreateCommunityWatchlistModal()"
+          [disabled]="communityWatchLists.length >= 3"
+          [attr.title]="communityWatchLists.length >= 3 ? (language === 'en' ? 'You can only create up to 3 community watch lists.' : 'يمكنك إنشاء حتى 3 قوائم مراقبة للأحياء فقط.') : null">
+          {{ language === 'en' ? 'Create New Community Watch List' : 'إنشاء قائمة مراقبة أحياء جديدة' }}
+        </button>
+        <div *ngIf="communityWatchLists.length >= 3" class="text-danger mt-1 small">
+          {{ language === 'en' ? 'You can only create up to 3 community watch lists.' : 'يمكنك إنشاء حتى 3 قوائم مراقبة للأحياء فقط.' }}
+        </div>
+      </div>
+      
+      
+      
+      
+      <div *ngIf="!selectedCommunityWatchlist" class="row">
+        <div class="col-md-4 mb-4" *ngFor="let list of communityWatchLists">
+          <div class="card h-100 shadow-sm" style="cursor:pointer;" (click)="onCommunityWatchlistClick(list)">
+            <div class="card-body p-0">
+              <!-- Mini map at the top -->
+              <div class="mini-map-container mb-2" (click)="onCommunityMapClick(list)">
+                <div leaflet
+                     [leafletOptions]="getCommunityMiniMapOptions(list)"
+                     [leafletLayers]="getCommunityMiniMapLayers(list)"
+                     style="height:100%; width:100%;">
+                </div>
+              </div>
+              <div class="px-0 pt-2 mb-1 text-dark" [ngClass]="{'text-start': language === 'en', 'text-end': language !== 'en'}" style="font-weight:400;">
+                {{ list.name }}
+              </div>
+              <div class="d-flex justify-content-end">
+                <button class="btn btn-outline-danger btn-sm mb-2" (click)="softDeleteWatchlist(list); $event.stopPropagation();">
+                  {{ language === 'en' ? 'Remove' : 'إزالة' }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Show list view if a community watchlist is selected and not in properties list view -->
+      <div *ngIf="selectedCommunityWatchlist && !showCommunityPropertiesList && !selectedProperty">
+        <nav aria-label="breadcrumb" class="mb-3">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+              <a href="#" (click)="onBackToCommunityWatchlists(); $event.preventDefault();">
+                {{ language === 'en' ? 'Community Watch List' : 'قائمة مراقبة الأحياء' }}
+              </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+              {{ language === 'en' ? 'List View' : 'عرض القائمة' }}
+            </li>
+          </ol>
+        </nav>
+        <app-property-list-view
+          [properties]="selectedCommunityWatchlist.communities"
+          (propertySelected)="onPropertySelected($event)">
+        </app-property-list-view>
+      </div>
+
+      <!-- Show properties for a specific community (after clicking on the map) -->
+      <div *ngIf="showCommunityPropertiesList && !selectedProperty">
+        <nav aria-label="breadcrumb" class="mb-3">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+              <a href="#" (click)="onBackToCommunityWatchlists(); $event.preventDefault();">
+                {{ language === 'en' ? 'Community Watch List' : 'قائمة مراقبة الأحياء' }}
+              </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+              {{ language === 'en' ? 'Community Properties' : 'عقارات الحي' }}
+            </li>
+          </ol>
+        </nav>
+        <app-property-list-view
+          [properties]="selectedCommunityProperties"
+          [districtName]="(selectedCommunityWatchlist?.district?.nameEn || '') + ' ' + (selectedCommunityWatchlist?.district?.nameAr || '')"
+          (propertySelected)="onPropertySelected($event)">
+        </app-property-list-view>
+      </div>
+    </div>
+
+    <!-- Areas Watch List Tab -->
+    <div *ngSwitchCase="'area'" class="row">
+      <!-- Only show tiles if not viewing area properties or property details -->
+      <ng-container *ngIf="!showAreaPropertiesList && !selectedProperty">
+        <div class="col-12 d-flex flex-column align-items-end mb-3">
+          <button
+            class="btn btn-info btn-sm"
+            (click)="openCreateAreaWatchlistModal()"
+            [disabled]="areaWatchLists.length >= 3"
+            [attr.title]="areaWatchLists.length >= 3 ? (language === 'en' ? 'You can only create up to 3 area watch lists.' : 'يمكنك إنشاء حتى 3 قوائم مراقبة للمناطق فقط.') : null">
+            {{ language === 'en' ? 'Create New Areas Watch List' : 'إنشاء قائمة مراقبة مناطق جديدة' }}
+          </button>
+          <div *ngIf="areaWatchLists.length >= 3" class="text-danger mt-1 small">
+            {{ language === 'en' ? 'You can only create up to 3 Area watch lists.' : 'يمكنك إنشاء حتى 3 قوائم مراقبة للمناطق فقط.' }}
+          </div>
+        </div>
+        <div class="col-md-4 mb-4" *ngFor="let list of areaWatchLists">
+          <h5>{{ list.name }} <span class="badge bg-info">{{ language === 'en' ? 'Area' : 'منطقة' }}</span></h5>
+          <div class="card h-100 shadow-sm" style="cursor:pointer;" (click)="onAreaWatchlistClick(list)">
+            <div class="card-body p-0">
+              <div class="mini-map-container mb-2">
+                <div leaflet
+                     [leafletOptions]="getAreaMiniMapOptions(list)"
+                     [leafletLayers]="getAreaMiniMapLayers(list)"
+                     style="height:100%; width:100%;">
+                </div>
+              </div>
+              
+                  <div class="d-flex justify-content-end p-2" style="gap:6px;">
+                    <button class="btn btn-outline-primary btn-sm"
+                          (click)="showAreaOnMap(list); $event.stopPropagation();">
+                            {{ language === 'en' ? 'Show Area in Search Map' : 'عرض المنطقة على الخريطة' }}
+                  </button>
+                    <button class="btn btn-outline-danger btn-sm" (click)="softDeleteWatchlist(list)">
+                  {{ language === 'en' ? 'Remove' : 'إزالة' }}
+                </button>
+                  </div>
+             
+             
+             
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- Area Properties List View -->
+      <div *ngIf="showAreaPropertiesList && !selectedProperty">
+        <nav aria-label="breadcrumb" class="mb-3">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+              <a href="#" (click)="onBackToAreaWatchlists(); $event.preventDefault();">
+                {{ language === 'en' ? 'Areas Watch List' : 'قائمة مراقبة المناطق' }}
+              </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+              {{ language === 'en' ? 'Area Properties' : 'عقارات المنطقة' }}
+            </li>
+          </ol>
+        </nav>
+        <app-property-list-view
+          [properties]="selectedAreaProperties"
+          [districts]="districts"
+          (propertySelected)="onPropertySelected($event)">
+        </app-property-list-view>
+      </div>
+
+      <!-- Area Property Details View -->
+     
+    </div>
+  </div>
+
+  <!-- Create Watchlist Modal -->
+
+  <!-- Create Area Watchlist Modal -->
+  <div class="modal fade" id="createAreaWatchlistModal" tabindex="-1" aria-labelledby="createAreaWatchlistModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="createAreaWatchlistModalLabel">{{ language === 'en' ? 'New Area Watchlist' : 'قائمة مراقبة منطقة جديدة' }}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" [attr.aria-label]="language === 'en' ? 'Close' : 'إغلاق'"></button>
+        </div>
+        <div class="modal-body">
+          <label for="areaWatchlistName" class="form-label">{{ language === 'en' ? 'Enter Watchlist Name' : 'أدخل اسم القائمة' }}</label>
+          <input type="text" id="areaWatchlistName" class="form-control mb-3" [(ngModel)]="newAreaWatchlistName">
+
+          <div style="height: 400px; width: 100%;">
+            <div leaflet id="area-modal-map"
+                 [leafletOptions]="areaMapOptions"
+                 (leafletMapReady)="onAreaMapReady($event)">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ language === 'en' ? 'Cancel' : 'إلغاء' }}</button>
+          <button type="button" class="btn btn-primary ms-auto" (click)="confirmCreateAreaWatchList()">{{ language === 'en' ? 'Create' : 'إنشاء' }}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Community Watchlist Modal -->
+  <div class="modal fade" id="createCommunityWatchlistModal" tabindex="-1" aria-labelledby="createCommunityWatchlistModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">{{ language === 'en' ? 'New Community Watchlist' : 'قائمة مراقبة حي جديدة' }}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" [attr.aria-label]="language === 'en' ? 'Close' : 'إغلاق'"></button>
+        </div>
+        <div class="modal-body">
+          <label class="form-label">{{ language === 'en' ? 'Enter Watchlist Name' : 'أدخل اسم القائمة' }}</label>
+          <input type="text" class="form-control mb-3" [(ngModel)]="newCommunityWatchlistName">
+
+          <label class="form-label">{{ language === 'en' ? 'Select City' : 'اختر المدينة' }}</label>
+          <select class="form-select mb-3" [(ngModel)]="selectedCity" (change)="onCityChange()">
+            <option *ngFor="let city of cities" [value]="city.id">{{ language === 'en' ? city.nameEn : city.nameAr }}</option>
+          </select>
+
+          <label class="form-label">{{ language === 'en' ? 'Select District' : 'اختر المنطقة' }}</label>
+          <select class="form-select mb-3" [(ngModel)]="selectedDistrict" (change)="onDistrictChange()">
+            <option [ngValue]="null" disabled selected>{{ language === 'en' ? '-- Select District --' : '-- اختر المنطقة --' }}</option>
+            <option *ngFor="let district of districts" [ngValue]="district.id">
+              {{ language === 'en' ? district.nameEn + ' : ' + district.nameAr : district.nameAr + ' : ' + district.nameEn }}
+            </option>
+          </select>
+
+          <div style="height: 400px; width: 100%;">
+            <div leaflet
+                 [leafletOptions]="communityMapOptions"
+                 [leafletLayers]="districtMapLayers"
+                 (leafletMapReady)="onDistrictMapReady($event)">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ language === 'en' ? 'Cancel' : 'إلغاء' }}</button>
+          <button type="button" class="btn btn-primary ms-auto" (click)="confirmCreateCommunityWatchList()">{{ language === 'en' ? 'Create' : 'إنشاء' }}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Property Watchlist Modal -->
+  <div class="modal fade" id="createPropertyWatchlistModal" tabindex="-1" aria-labelledby="createPropertyWatchlistModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="createPropertyWatchlistModalLabel">{{ language === 'en' ? 'New Property Watch List' : 'قائمة مراقبة عقارات جديدة' }}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" [attr.aria-label]="language === 'en' ? 'Close' : 'إغلاق'"></button>
+        </div>
+        <div class="modal-body">
+          <label for="propertyWatchlistName" class="form-label">{{ language === 'en' ? 'Enter Watch List Name' : 'أدخل اسم القائمة' }}</label>
+          <input type="text" id="propertyWatchlistName" class="form-control mb-3" [(ngModel)]="newPropertyWatchlistName">
+
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="radio" id="shareable" name="propertyPrivacy" [(ngModel)]="newPropertyWatchlistPrivacy" value="shareable">
+            <label class="form-check-label" for="shareable">{{ language === 'en' ? 'Shareable' : 'قابلة للمشاركة' }}</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" id="private" name="propertyPrivacy" [(ngModel)]="newPropertyWatchlistPrivacy" value="private">
+            <label class="form-check-label" for="private">{{ language === 'en' ? 'Private' : 'خاصة' }}</label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ language === 'en' ? 'Cancel' : 'إلغاء' }}</button>
+          <button type="button" class="btn btn-primary" (click)="confirmCreatePropertyWatchList()">{{ language === 'en' ? 'Create' : 'إنشاء' }}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Property Details View -->
+  <div *ngIf="selectedProperty">
+    <nav aria-label="breadcrumb" class="mb-3">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a href="#" 
+             *ngIf="activeWatchTab === 'property'" 
+             (click)="onBackToWatchlists(); $event.preventDefault();">
+            {{ language === 'en' ? 'Property Watch List' : 'قائمة مراقبة العقارات' }}
+          </a>
+          <a href="#" 
+             *ngIf="activeWatchTab === 'community'" 
+             (click)="onBackToCommunityWatchlists(); $event.preventDefault();">
+            {{ language === 'en' ? 'Community Watch List' : 'قائمة مراقبة الأحياء' }}
+          </a>
+          <a href="#" 
+             *ngIf="activeWatchTab === 'area'" 
+             (click)="onBackToAreaWatchlists(); $event.preventDefault();">
+            {{ language === 'en' ? 'Areas Watch List' : 'قائمة مراقبة المناطق' }}
+          </a>
+        </li>
+        <li class="breadcrumb-item">
+          <a href="#" 
+             *ngIf="activeWatchTab === 'property'" 
+             (click)="onBackToListView(); $event.preventDefault();">
+            {{ language === 'en' ? 'List View' : 'عرض القائمة' }}
+          </a>
+          <a href="#" 
+             *ngIf="activeWatchTab === 'community'" 
+             (click)="onBackToCommunityListView(); $event.preventDefault();">
+            {{ language === 'en' ? 'List View' : 'عرض القائمة' }}
+          </a>
+          <a href="#" 
+             *ngIf="activeWatchTab === 'area'" 
+             (click)="onBackToAreaListView(); $event.preventDefault();">
+            {{ language === 'en' ? 'List View' : 'عرض القائمة' }}
+          </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+          {{ language === 'en' ? 'Property Details' : 'تفاصيل العقار' }}
+        </li>
+      </ol>
+    </nav>
+    <app-property-details [property]="selectedProperty" [showCloseButton]="false"></app-property-details>
+  </div>
+
+</div>

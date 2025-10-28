@@ -1,0 +1,85 @@
+<div class="row" [attr.dir]="language === 'en' ? 'ltr' : 'rtl'">
+  <div class="col-md-4 mb-4" *ngFor="let property of properties">
+    <div class="card h-100 shadow-sm" style="cursor:pointer;" (click)="onPropertyClick(property)">
+      <div class="position-relative">
+        <img
+          [src]="getPhotoUrl(property)"
+          alt="{{ language === 'en' ? 'photo' : 'صورة' }}"
+          style="width:100%; height:260px; object-fit:cover; border-radius:6px 6px 0 0; display:block;"
+          loading="lazy"
+        />
+        <span
+          *ngIf="property.listingStatus"
+          class="badge bg-info text-dark position-absolute"
+          [style.left]="language === 'en' ? '16px' : 'auto'"
+          [style.right]="language !== 'en' ? '16px' : 'auto'"
+          style="bottom: 16px; font-size: 1rem; opacity: 0.93;"
+        >
+          {{ language === 'en' ? property.listingStatus : (property.listingStatusAr || property.listingStatus) }}
+        </span>
+      </div>
+
+      <div class="card-body p-2" [ngClass]="{'text-start': language === 'en', 'text-end': language !== 'en'}">
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <span style="font-weight: bold; color: #28a3b3;">
+            {{ language === 'en' ? ('JOD ' + (property.price | number)) : ('دينار ' + (property.price | number)) }}
+          </span>
+          <span style="font-weight: normal; color: #666; font-size: 0.95em;">
+            {{ language === 'en' ? 'Listed:' : 'مدرج:' }}
+            {{ property.listingDate ? (property.listingDate | date:'yyyy-MM-dd') : (language === 'en' ? 'N/A' : 'غير متوفر') }}
+          </span>
+        </div>
+
+        <div style="color: #222;">
+          <div>
+            {{ property.address }},
+            <ng-container *ngIf="districtName; else noDistrictName">
+              {{ districtName }}
+            </ng-container>
+            <ng-template #noDistrictName>
+              <ng-container *ngIf="property.district?.nameEn || property.district?.nameAr; else lookupDistrict">
+                {{ language === 'en' ? (property.district?.nameEn || property.district?.nameAr) : (property.district?.nameAr || property.district?.nameEn) }}
+              </ng-container>
+              <ng-template #lookupDistrict>
+                {{ getDistrictNames(property.districtId) }}
+              </ng-template>
+            </ng-template>
+          </div>
+        </div>
+
+        <div style="color: #444; font-size: 0.95em;">
+          {{ (property.propertyCategory?.code === 'Land' || property.propertyCategory === 'Land')
+              ? (language === 'en' ? 'Land' : 'أرض')
+              : ( language === 'en'
+                  ? (property.propertyType?.nameEn || property.propertyType || 'N/A')
+                  : (property.propertyType?.nameAr || property.propertyType || 'غير متوفر')
+                )
+          }}
+        </div>
+
+        <div class="d-flex align-items-center" style="font-size: 0.95em; gap: 12px; margin-top:8px;">
+          <span class="d-flex align-items-center" title="{{ language === 'en' ? 'Bedrooms' : 'غرف النوم' }}" style="color:#28a3b3;">
+            <img src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/person-fill.svg"
+                 alt="bed" width="16"
+                 style="vertical-align:middle; margin-right:6px;">
+            <span>{{ property.bedrooms ?? 0 }}</span>
+          </span>
+
+          <span class="d-flex align-items-center" title="{{ language === 'en' ? 'Bathrooms' : 'الحمامات' }}" style="color:#28a3b3;">
+            <img src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/droplet-half.svg"
+                 alt="bath" width="16"
+                 style="vertical-align:middle; margin-right:6px;">
+            <span>{{ property.bathrooms ?? 0 }}</span>
+          </span>
+
+          <span class="d-flex align-items-center" title="{{ language === 'en' ? 'Parking' : 'مواقف السيارات' }}" style="color:#28a3b3;">
+            <img src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/car-front-fill.svg"
+                 alt="garage" width="16"
+                 style="vertical-align:middle; margin-right:6px;">
+            <span>{{ property.parkingPlaces ?? property.parking ?? 0 }}</span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

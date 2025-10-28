@@ -1,0 +1,450 @@
+<div *ngIf="housing; else notLoggedIn">
+  <div class="container-fluid position-relative">
+    <!-- Logout Button -->
+    <button
+      *ngIf="!isViewMode"
+      class="btn btn-outline-danger position-absolute"
+      style="top: 1rem; right: 1rem; z-index: 10;"
+      (click)="onLogout()"
+    >
+      <i class="bi bi-box-arrow-right me-1"></i> {{ language === 'en' ? 'Logout' : 'تسجيل الخروج' }}
+    </button>
+
+    <div class="card mx-auto mt-5 shadow-lg" style="max-width: 100%;">
+      <div class="card-body">
+
+        <!-- Breadcrumb -->
+        <nav class="mb-3" aria-label="breadcrumb" *ngIf="isViewMode">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+              <a href="#" class="realtor-account-link" (click)="goToHousingCompanies($event)">
+                {{ language === 'en' ? 'Housing Companies' : 'شركات الإسكان' }}
+              </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+              {{ housing.companyName }} {{ language === 'en' ? "'s Profile" : 'الملف الشخصي' }}
+            </li>
+          </ol>
+        </nav>
+
+        <!-- Profile Photo -->
+        <div *ngIf="activeTab === 'profile' && housing">
+          <!-- Profile Photo -->
+        </div>
+
+        <!-- Tabs -->
+        <ul class="nav nav-tabs mb-4">
+          <li class="nav-item">
+            <button class="nav-link realtor-tab" [class.active]="activeTab === 'profile'" (click)="activeTab = 'profile'">
+              {{ language === 'en' ? 'Profile' : 'الملف الشخصي' }}
+            </button>
+          </li>
+          <li class="nav-item" *ngIf="!isViewMode">
+            <button class="nav-link realtor-tab" [class.active]="activeTab === 'create-listing'" (click)="activeTab = 'create-listing'">
+              {{ language === 'en' ? 'Create Listing' : 'إنشاء إعلان' }}
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link realtor-tab" [class.active]="activeTab === 'properties'" (click)="activeTab = 'properties'">
+              {{ language === 'en' ? 'Properties' : 'العقارات' }}
+            </button>
+          </li>
+        </ul>
+
+        <div [ngSwitch]="activeTab">
+          <!-- Profile Tab -->
+          <div *ngSwitchCase="'profile'">
+            <div *ngIf="housing" class="container">
+              <!-- Profile Photo -->
+              <div class="text-center mb-4">
+                <img
+                  *ngIf="photoPreview || housing?.profilePhotoUrl || housing?.profilePhoto"
+                  [src]="photoPreview || getProfilePhotoSrc(housing.profilePhoto || housing.profilePhotoUrl)"
+                  class="rounded-circle border border-2"
+                  style="width: 300px; height: 300px; object-fit: cover; box-shadow: 0 0 16px #ccc;">
+                <div *ngIf="housing" class="fw-bold mt-2" style="font-size: 1.1em;">
+                  {{ housing.companyName }}
+                </div>
+                <span class="badge bg-secondary mt-2">{{ housing.role | titlecase }}</span>
+                <div *ngIf="!isViewMode && !housing?.profilePhoto" class="text-muted mt-2">
+                  {{ language === 'en' ? 'No profile photo uploaded.' : 'لم يتم تحميل صورة الملف الشخصي' }}<br>
+                  <label class="btn btn-outline-primary mt-2">
+                    {{ language === 'en' ? 'Upload Photo' : 'تحميل صورة' }}
+                    <input type="file" accept="image/*" (change)="onPhotoSelected($event)" hidden>
+                  </label>
+                </div>
+                <div *ngIf="!isViewMode && photoPreview" class="mt-2">
+                  <button class="btn btn-danger btn-sm me-2" (click)="removePhoto()">
+                    {{ language === 'en' ? 'Remove' : 'حذف' }}
+                  </button>
+                  <button class="btn btn-success btn-sm" (click)="updatePhoto()">
+                    {{ language === 'en' ? 'Update' : 'تحديث' }}
+                  </button>
+                </div>
+              </div>
+
+              <div *ngIf="activeTab === 'profile'" class="mb-4">
+                <div leaflet 
+                     [leafletOptions]="mapOptions"
+                      [leafletLayers]="districtPolygonLayers"
+                     style="height: 300px; width: 100%; border-radius: 12px; border: 2px solid #1976d2;">
+                </div>
+              </div>
+
+              <!-- Company Info -->
+              <div class="row justify-content-center">
+                <div class="col-md-12" style="max-width: 100%;">
+                  <div class="card realtor-info-card mb-4">
+                    <div class="realtor-info-header">
+                      {{ language === 'en' ? 'Housing Company Info' : 'معلومات شركة الإسكان' }}
+                    </div>
+                    <div class="card-body">
+                      <div class="row g-3">
+                        <div class="col-6 d-flex align-items-center mb-2">
+                          <label class="fw-bold me-2 mb-0" style="min-width: 120px;">
+                            {{ language === 'en' ? 'First Name' : 'الاسم الأول' }}:
+                          </label>
+                          <span *ngIf="!editFirstName">
+                            {{ housing.firstName || '-' }}
+                            <button  *ngIf="!isViewMode" class="btn btn-link btn-sm ms-2" style="color:#222;" (click)="toggleEdit('firstName')">
+                              <i class="bi bi-pencil"></i>
+                            </button>
+                          </span>
+                          <span *ngIf="editFirstName" class="d-flex align-items-center">
+                            <input class="form-control form-control-sm me-2" [(ngModel)]="editFirstNameValue" style="max-width:180px;">
+                            <button  *ngIf="!isViewMode" class="btn btn-success btn-sm me-1" (click)="saveEdit('firstName')">
+                              {{ language === 'en' ? 'Save' : 'حفظ' }}
+                            </button>
+                            <button  *ngIf="!isViewMode" class="btn btn-secondary btn-sm" (click)="editFirstName = false">
+                              {{ language === 'en' ? 'Cancel' : 'إلغاء' }}
+                            </button>
+                          </span>
+                        </div>
+                        <div class="col-6 d-flex align-items-center mb-2">
+                          <label class="fw-bold me-2 mb-0" style="min-width: 120px;">
+                            {{ language === 'en' ? 'Last Name' : 'اسم العائلة' }}:
+                          </label>
+                          <span *ngIf="!editLastName">
+                            {{ housing.lastName || '-' }}
+                            <button  *ngIf="!isViewMode" class="btn btn-link btn-sm ms-2" style="color:#222;" (click)="toggleEdit('lastName')">
+                              <i class="bi bi-pencil"></i>
+                            </button>
+                          </span>
+                          <span *ngIf="editLastName" class="d-flex align-items-center">
+                            <input class="form-control form-control-sm me-2" [(ngModel)]="editLastNameValue" style="max-width:180px;">
+                            <button  *ngIf="!isViewMode" class="btn btn-success btn-sm me-1" (click)="saveEdit('lastName')">
+                              {{ language === 'en' ? 'Save' : 'حفظ' }}
+                            </button>
+                            <button  *ngIf="!isViewMode" class="btn btn-secondary btn-sm" (click)="editLastName = false">
+                              {{ language === 'en' ? 'Cancel' : 'إلغاء' }}
+                            </button>
+                          </span>
+                        </div>
+                        <div  *ngIf="!isViewMode" class="col-6 d-flex align-items-center mb-2">
+                          <label class="fw-bold me-2 mb-0" style="min-width: 120px;">
+                            {{ language === 'en' ? 'Username' : 'اسم المستخدم' }}:
+                          </label>
+                          <span *ngIf="!editUsername">
+                            {{ housing.username || '-' }}
+                            <button class="btn btn-link btn-sm ms-2" style="color:#222;" (click)="toggleEdit('username')">
+                              <i class="bi bi-pencil"></i>
+                            </button>
+                          </span>
+                          <span *ngIf="editUsername" class="d-flex align-items-center">
+                            <input class="form-control form-control-sm me-2" [(ngModel)]="editUsernameValue" style="max-width:180px;">
+                            <button class="btn btn-success btn-sm me-1" (click)="saveEdit('username')">
+                              {{ language === 'en' ? 'Save' : 'حفظ' }}
+                            </button>
+                            <button class="btn btn-secondary btn-sm" (click)="editUsername = false">
+                              {{ language === 'en' ? 'Cancel' : 'إلغاء' }}
+                            </button>
+                          </span>
+                        </div>
+                        <div  *ngIf="!isViewMode" class="col-6 d-flex align-items-center mb-2">
+                          <label class="fw-bold me-2 mb-0" style="min-width: 120px;">
+                            {{ language === 'en' ? 'Password' : 'كلمة المرور' }}:
+                          </label>
+                          <span *ngIf="!editPassword">
+                            ••••••••
+                            <button class="btn btn-link btn-sm ms-2" style="color:#222;" (click)="toggleEdit('password')">
+                              <i class="bi bi-pencil"></i>
+                            </button>
+                          </span>
+                          <span *ngIf="editPassword" class="d-flex align-items-center">
+                            <input type="password" class="form-control form-control-sm me-2" [(ngModel)]="editPasswordValue" style="max-width:180px;" [placeholder]="language === 'en' ? 'New password' : 'كلمة مرور جديدة'">
+                            <button class="btn btn-success btn-sm me-1" (click)="saveEdit('password')">
+                              {{ language === 'en' ? 'Save' : 'حفظ' }}
+                            </button>
+                            <button class="btn btn-secondary btn-sm" (click)="editPassword = false">
+                              {{ language === 'en' ? 'Cancel' : 'إلغاء' }}
+                            </button>
+                          </span>
+                        </div>
+                        <div class="col-6 d-flex align-items-center mb-2">
+                          <label class="fw-bold me-2 mb-0" style="min-width: 120px;">
+                            {{ language === 'en' ? 'Email' : 'البريد الإلكتروني' }}:
+                          </label>
+                          <span *ngIf="!editEmail">
+                            {{ housing.email || '-' }}
+                            <button  *ngIf="!isViewMode" class="btn btn-link btn-sm ms-2" style="color:#222;" (click)="toggleEdit('email')">
+                              <i class="bi bi-pencil"></i>
+                            </button>
+                          </span>
+                          <span *ngIf="editEmail" class="d-flex align-items-center">
+                            <input class="form-control form-control-sm me-2" [(ngModel)]="editEmailValue" style="max-width:220px;">
+                            <button  *ngIf="!isViewMode" class="btn btn-success btn-sm me-1" (click)="saveEdit('email')">
+                              {{ language === 'en' ? 'Save' : 'حفظ' }}
+                            </button>
+                            <button  *ngIf="!isViewMode" class="btn btn-secondary btn-sm" (click)="editEmail = false">
+                              {{ language === 'en' ? 'Cancel' : 'إلغاء' }}
+                            </button>
+                          </span>
+                        </div>
+                        <div class="col-6 d-flex align-items-center mb-2">
+                          <label class="fw-bold me-2 mb-0" style="min-width: 120px;">
+                            {{ language === 'en' ? 'Phone' : 'الهاتف' }}:
+                          </label>
+                          <span *ngIf="!editPhone">
+                            {{ housing.phoneNumber || '-' }}
+                            <button  *ngIf="!isViewMode" class="btn btn-link btn-sm ms-2" style="color:#222;" (click)="toggleEdit('phone')">
+                              <i class="bi bi-pencil"></i>
+                            </button>
+                          </span>
+                          <span *ngIf="editPhone" class="d-flex align-items-center">
+                            <input class="form-control form-control-sm me-2" [(ngModel)]="editPhoneValue" style="max-width:180px;">
+                            <button  *ngIf="!isViewMode" class="btn btn-success btn-sm me-1" (click)="saveEdit('phone')">
+                              {{ language === 'en' ? 'Save' : 'حفظ' }}
+                            </button>
+                            <button class="btn btn-secondary btn-sm" (click)="editPhone = false">
+                              {{ language === 'en' ? 'Cancel' : 'إلغاء' }}
+                            </button>
+                          </span>
+                        </div>
+                        <div  *ngIf="!isViewMode"class="col-6 d-flex align-items-center mb-2">
+                          <label class="fw-bold me-2 mb-0" style="min-width: 120px;">
+                            {{ language === 'en' ? 'License #' : 'رقم الترخيص' }}:
+                          </label>
+                          <span>{{ housing.licenseNumber || '-' }}</span>
+                        </div>
+                        <div  *ngIf="!isViewMode" class="col-6 d-flex align-items-center mb-2">
+                          <label class="fw-bold me-2 mb-0" style="min-width: 120px;">
+                            {{ language === 'en' ? 'Verification' : 'التحقق' }}:
+                          </label>
+                          <span>
+                            <span class="badge"
+                              [ngClass]="{
+                                'bg-warning': housing.verificationStatus === 'pending',
+                                'bg-success': housing.verificationStatus === 'verified',
+                                'bg-danger': housing.verificationStatus === 'rejected'
+                              }">
+                              {{ language === 'en'
+                                ? (housing.verificationStatus | titlecase)
+                                : (housing.verificationStatus === 'pending' ? 'قيد الانتظار' : housing.verificationStatus === 'verified' ? 'تم التحقق' : 'مرفوض') }}
+                            </span>
+                          </span>
+                        </div>
+                        <div class="col-6 d-flex align-items-center mb-2">
+                          <label class="fw-bold me-2 mb-0" style="min-width: 120px;">
+                            {{ language === 'en' ? 'Company Name' : 'اسم الشركة' }}:
+                          </label>
+                          <span>{{ housing.companyName || '-' }}</span>
+                        </div>
+                        <div class="col-6 d-flex align-items-center mb-2">
+                          <label class="fw-bold me-2 mb-0" style="min-width: 120px;">
+                            {{ language === 'en' ? 'Company Address' : 'عنوان الشركة' }}:
+                          </label>
+                          <span>{{ housing.companyAddress || '-' }}</span>
+                        </div>
+                        <!-- Website -->
+                        <div class="col-6 d-flex align-items-center mb-2">
+                          <label class="fw-bold me-2 mb-0" style="min-width: 120px;">
+                            {{ language === 'en' ? 'Website' : 'الموقع الإلكتروني' }}:
+                          </label>
+                          <span *ngIf="!editWebsite">
+                            <a *ngIf="housing.websiteUrl" [href]="housing.websiteUrl" target="_blank">{{ housing.websiteUrl }}</a>
+                            <span *ngIf="!housing.websiteUrl">-</span>
+                            <button *ngIf="!isViewMode" class="btn btn-link btn-sm ms-2" style="color:#222;" (click)="toggleEdit('website')">
+                              <i class="bi bi-pencil"></i>
+                            </button>
+                          </span>
+                          <span *ngIf="editWebsite && !isViewMode" class="d-flex align-items-center">
+                            <input class="form-control form-control-sm me-2" [(ngModel)]="editWebsiteValue" style="max-width:220px;">
+                            <button class="btn btn-success btn-sm me-1" (click)="saveEdit('website')">
+                              {{ language === 'en' ? 'Save' : 'حفظ' }}
+                            </button>
+                            <button class="btn btn-secondary btn-sm" (click)="editWebsite = false">
+                              {{ language === 'en' ? 'Cancel' : 'إلغاء' }}
+                            </button>
+                          </span>
+                        </div>
+
+                        <!-- Bio -->
+                        <div class="col-12 d-flex align-items-center mb-2">
+                          <label class="fw-bold me-2 mb-0" style="min-width: 120px;">
+                            {{ language === 'en' ? 'Bio' : 'نبذة تعريفية' }}:
+                          </label>
+                          <span *ngIf="!editBio">
+                            {{ housing.bio || '-' }}
+                            <button  *ngIf="!isViewMode" class="btn btn-link btn-sm ms-2" style="color:#222;" (click)="toggleEdit('bio')">
+                              <i class="bi bi-pencil"></i>
+                            </button>
+                          </span>
+                          <span *ngIf="editBio && !isViewMode" class="d-flex align-items-center w-100">
+                            <textarea class="form-control form-control-sm me-2" [(ngModel)]="editBioValue" rows="2" style="max-width:350px;"></textarea>
+                            <button class="btn btn-success btn-sm me-1" (click)="saveEdit('bio')">
+                              {{ language === 'en' ? 'Save' : 'حفظ' }}
+                            </button>
+                            <button class="btn btn-secondary btn-sm" (click)="editBio = false">
+                              {{ language === 'en' ? 'Cancel' : 'إلغاء' }}
+                            </button>
+                          </span>
+                        </div>
+                        <!-- Social Links -->
+                        <div class="col-12 d-flex align-items-center mb-2">
+                          <label class="fw-bold me-2 mb-0" style="min-width: 120px;">
+                            {{ language === 'en' ? 'Social Links' : 'روابط التواصل الاجتماعي' }}:
+                          </label>
+                          <span *ngIf="!editSocialLinks">
+                            <ng-container *ngIf="housing.socialLinks?.length; else noLinks">
+                              <a *ngFor="let link of housing.socialLinks" [href]="link" target="_blank" class="me-2">
+                                <i class="bi bi-link-45deg"></i> {{ link }}
+                              </a>
+                            </ng-container>
+                            <ng-template #noLinks>-</ng-template>
+                            <button  *ngIf="!isViewMode" class="btn btn-link btn-sm ms-2" style="color:#222;" (click)="toggleEdit('socialLinks')">
+                              <i class="bi bi-pencil"></i>
+                            </button>
+                          </span>
+                          <span *ngIf="editSocialLinks && !isViewMode" class="d-flex align-items-center w-100 flex-wrap">
+                            <div *ngFor="let link of editSocialLinksValue; let i = index" class="d-flex align-items-center me-2 mb-1">
+                              <input *ngIf="!isViewMode" class="form-control form-control-sm me-1" [(ngModel)]="editSocialLinksValue[i]" style="max-width:200px;">
+                              <button *ngIf="!isViewMode" class="btn btn-danger btn-sm" (click)="editSocialLinksValue.splice(i,1)">&times;</button>
+                            </div>
+                            <button class="btn btn-primary btn-sm me-2" (click)="editSocialLinksValue.push('')">
+                              {{ language === 'en' ? 'Add' : 'إضافة' }}
+                            </button>
+                            <button class="btn btn-success btn-sm me-1" (click)="saveEdit('socialLinks')">
+                              {{ language === 'en' ? 'Save' : 'حفظ' }}
+                            </button>
+                            <button class="btn btn-secondary btn-sm" (click)="editSocialLinks = false">
+                              {{ language === 'en' ? 'Cancel' : 'إلغاء' }}
+                            </button>
+                          </span>
+                        </div>
+                        <div *ngIf="!isViewMode" class="col-12 d-flex align-items-center mb-2">
+                          <label class="fw-bold me-2 mb-0" style="min-width: 120px;">
+                            {{ language === 'en' ? 'Registered On' : 'تاريخ التسجيل' }}:
+                          </label>
+                          <span>{{ housing.createdAt ? (housing.createdAt | date:'yyyy-MM-dd HH:mm:ss') : '-' }}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Create Listing Tab -->
+          <div *ngSwitchCase="'create-listing'">
+            <app-create-pre-construction-listing></app-create-pre-construction-listing>
+          </div>
+
+          <!-- Properties Tab -->
+          <div *ngSwitchCase="'properties'">
+            <div *ngIf="propertiesLoading" class="text-center my-4">
+              <span class="spinner-border spinner-border-sm"></span>
+              {{ language === 'en' ? 'Loading properties...' : 'جاري تحميل العقارات...' }}
+            </div>
+            <div *ngIf="!propertiesLoading && properties.length === 0" class="alert alert-info mt-4">
+              {{ language === 'en' ? 'No properties found.' : 'لم يتم العثور على عقارات' }}
+            </div>
+            
+            <div *ngIf="activeTab === 'properties'" class="mb-4">
+              <div class="row mb-3">
+                <div class="col-md-4">
+                  <select class="form-select" [(ngModel)]="selectedDistrictId" (change)="applyPropertyFilters()">
+                    <option value="">
+                      {{ language === 'en' ? 'All Districts' : 'جميع المناطق' }}
+                    </option>
+                    <option *ngFor="let district of availableDistricts" [value]="district.id">
+                      {{ language === 'en' ? district.nameEn : district.nameAr }}
+                    </option>
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <select class="form-select" [(ngModel)]="selectedType" (change)="applyPropertyFilters()">
+                    <option value="">
+                      {{ language === 'en' ? 'All Property Types' : 'جميع أنواع العقارات' }}
+                    </option>
+                    <option *ngFor="let type of propertyTypes" [value]="type">
+                      {{ language === 'en' ? type : (type === 'Apartment' ? 'شقة' : type === 'Villa' ? 'فيلا' : type) }}
+                    </option>
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <select class="form-select" [(ngModel)]="selectedStatus" (change)="applyPropertyFilters()">
+                    <option value="">
+                      {{ language === 'en' ? 'All Statuses' : 'جميع الحالات' }}
+                    </option>
+                    <option *ngFor="let status of propertyStatuses" [value]="status">
+                      {{ language === 'en' ? status : (status === 'Available' ? 'متاح' : status === 'Sold' ? 'مباع' : status) }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+              <div leaflet
+                   [leafletOptions]="propertiesMapOptions"
+                   [leafletLayers]="propertyMarkers"
+                   style="height: 350px; width: 100%; border-radius: 12px; border: 2px solid #1976d2;">
+              </div>
+            </div>
+            <div *ngIf="showMap">
+              <div leaflet [leafletOptions]="mapOptions"></div>
+            </div>
+            <div *ngIf="!showMap">
+              <div *ngFor="let property of filteredProperties" class="card mb-2">
+                <div class="card-body d-flex align-items-center">
+                  <img [src]="getPhotoUrl(property.photos?.[0])" alt="photo" style="width: 80px; height: 60px; object-fit: cover; border-radius: 6px; margin-right: 16px;">
+                  <div>
+                    <div class="fw-bold">{{ property.address }}</div>
+                    <div>
+                      {{ property.propertyType }} | ${{ property.price?.toLocaleString?.() ?? property.price }}
+                    </div>
+                    <div class="text-muted">
+                      {{ property.city }} {{ property.province }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div *ngIf="selectedProperty && showDetails" class="modal-backdrop-custom">
+              <div class="modal-custom">
+                <app-housing-company-listing-details
+                  [property]="selectedProperty"
+                  (close)="showDetails = false">
+                </app-housing-company-listing-details>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #notLoggedIn>
+  <div class="alert alert-warning mt-5 text-center">
+    <h4>
+      {{ language === 'en'
+        ? 'You must be logged in to view your account.'
+        : 'يجب عليك تسجيل الدخول لعرض حسابك' }}
+    </h4>
+    <button class="btn btn-primary mt-3" (click)="goToLogin()">
+      {{ language === 'en' ? 'Login' : 'تسجيل الدخول' }}
+    </button>
+  </div>
+</ng-template>
+
+

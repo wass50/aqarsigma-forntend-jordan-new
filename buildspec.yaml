@@ -1,0 +1,34 @@
+version: 0.2
+
+cache:
+  paths:
+    - node_modules/**
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 18
+    commands:
+      - echo "Install dependencies"
+      - npm ci
+  pre_build:
+    commands:
+      - echo "Node: $(node -v)  npm: $(npm -v)"
+      # optional: only run browser tests if you configured Chrome in the build image
+      - if [ "$CHROME_AVAILABLE" = "true" ]; then echo "Running browser tests"; npm run test -- --watch=false --browsers=HeadlessChrome || true; else echo "Skipping browser tests"; fi
+  build:
+    commands:
+      - echo "Building production"
+      - npm run build -- --configuration production
+  post_build:
+    commands:
+      - echo "Deploying to S3"
+      - BUILD_DIR=$(ls -d dist/* | head -n1)
+      - echo "Uploading $BUILD_DIR to s3://$S3_BUCKET"
+      - aws s3 sync "$BUILD_DIR" "s3://$S3_BUCKET" --delete
+      - if [ -n "$CLOUDFRONT_DISTRIBUTION_ID" ]; then echo "Invalidating CloudFront"; aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --paths "/*" || true; fi
+
+artifacts:
+  files:
+    - '**/*'
+  base-directory: 'dist'

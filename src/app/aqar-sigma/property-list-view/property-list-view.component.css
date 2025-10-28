@@ -1,0 +1,15 @@
+.card-body {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  padding-top: 0 !important;
+}
+
+.card {
+  padding: 0 !important;
+}
+
+.card img {
+  padding: 0 !important;
+  margin: 0 !important;
+  display: block;
+}

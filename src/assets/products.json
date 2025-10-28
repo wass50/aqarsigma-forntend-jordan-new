@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "name": "Wireless Mouse",
+    "description": "A comfortable and responsive wireless mouse.",
+    "price": 25.99,
+    "inStock": true,
+    "photo": "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80"
+  },
+  {
+    "id": 2,
+    "name": "Mechanical Keyboard",
+    "description": "A durable mechanical keyboard with RGB lighting.",
+    "price": 89.99,
+    "inStock": true,
+    "photo": "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=400&q=80"
+  },
+  {
+    "id": 3,
+    "name": "HD Monitor",
+    "description": "24-inch full HD monitor with vibrant colors.",
+    "price": 149.99,
+    "inStock": false
+  },
+  {
+    "id": 4,
+    "name": "USB-C Hub",
+    "description": "Multi-port USB-C hub for laptops and tablets.",
+    "price": 39.99,
+    "inStock": true
+  }
+]

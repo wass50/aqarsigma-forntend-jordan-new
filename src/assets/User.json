@@ -1,0 +1,14 @@
+{
+  "id": "101",
+  "username": "user",
+  "firstName": "John",
+  "lastName": "Smith",
+  "email": "john.smith@email.com",
+  "phoneNumber": "+1-555-987-6543",
+  "role": "realtor",
+  "isActive": true,
+  "createdAt": "2024-07-08T10:00:00Z",
+  "updatedAt": "2024-07-08T10:00:00Z",
+  "watchList": ["listing1", "listing3"],
+  "notificationPreferences": { "email": true, "sms": true }
+}

@@ -1,0 +1,22 @@
+.mini-map-container {
+  height: 240px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.mini-map-container .leaflet-container {
+  height: 100% !important;
+  width: 100% !important;
+  border-radius: 8px;
+  min-height: 240px;
+}
+
+.card-body {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  padding-top: 0 !important;
+}
+
+.card {
+  padding: 0 !important;
+}

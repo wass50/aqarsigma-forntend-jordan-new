@@ -1,0 +1,222 @@
+<div *ngIf="!isLoggedIn" class="alert alert-warning mt-4" [attr.dir]="language === 'en' ? 'ltr' : 'rtl'">
+  {{ language === 'en' ? 'You must be logged in to view your account.' : 'يجب تسجيل الدخول لعرض حسابك.' }}
+  <button class="btn btn-primary ms-2" (click)="goToLogin()">
+    {{ language === 'en' ? 'Login' : 'تسجيل الدخول' }}
+  </button>
+</div>
+
+<h4 class="fw-bold mb-3" [ngClass]="{'text-start': language === 'en', 'text-end': language !== 'en'}" style="padding-left: 130px;">
+  {{ language === 'en' ? 'User Account' : 'حساب المستخدم' }}
+</h4>
+
+<div *ngIf="isLoggedIn && user" class="container mt-2" [attr.dir]="language === 'en' ? 'ltr' : 'rtl'">
+  <!-- tabs -->
+  <ul class="nav nav-tabs mb-4">
+    <li class="nav nav-tabs mb-4 user-account-tabs">
+      <button class="nav-link" [class.active]="activeTab === 'profile'" (click)="activeTab = 'profile'">
+        {{ language === 'en' ? 'Profile' : 'الملف الشخصي' }}
+      </button>
+    </li>
+    <li class="nav nav-tabs mb-4 user-account-tabs">
+      <button class="nav-link" [class.active]="activeTab === 'create-listing'" (click)="activeTab = 'create-listing'">
+        {{ language === 'en' ? 'Create Listing' : 'إنشاء إعلان' }}
+      </button>
+    </li>
+    <li class="nav nav-tabs mb-4 user-account-tabs">
+      <button class="nav-link" [class.active]="activeTab === 'properties'" (click)="activeTab = 'properties'">
+        {{ language === 'en' ? 'Properties' : 'العقارات' }}
+      </button>
+    </li>
+  </ul>
+
+  <div [ngSwitch]="activeTab">
+    <div *ngSwitchCase="'profile'">
+      <div class="container-fluid mt-2">
+        <div class="row g-0">
+          <div class="col-lg-12" [ngClass]="{'text-start': language === 'en', 'text-end': language !== 'en'}">
+            <div class="card shadow mb-2">
+              <div class="card-body">
+                <!-- Sign-in user -->
+                <div class="row mb-4 align-items-center">
+                  <div class="col-auto fw-bold" style="min-width: 140px;">{{ language === 'en' ? 'Sign-in user' : 'اسم المستخدم' }}</div>
+                  <div class="col ps-0">
+                    <span *ngIf="!editSignInUserName">{{ user.username }}</span>
+                    <input *ngIf="editSignInUserName" [(ngModel)]="editSignInUserNameValue"
+                           class="form-control form-control-sm d-inline-block"
+                           style="width: 180px;">
+                  </div>
+                  <div class="col-auto ps-0">
+                    <button class="btn btn-primary btn-sm" (click)="toggleEdit('signInUserName')">✎ {{ language === 'en' ? 'Update' : 'تعديل' }}</button>
+                    <button *ngIf="editSignInUserName" class="btn btn-success btn-sm ms-2" (click)="saveEdit('signInUserName')">{{ language === 'en' ? 'Save' : 'حفظ' }}</button>
+                  </div>
+                </div>
+
+                <hr class="my-4 mx-0" style="width: 100%;">
+                <!-- Registered on -->
+                <div class="row mb-4 align-items-center">
+                  <div class="col-auto fw-bold" style="min-width: 140px;">{{ language === 'en' ? 'Registered on' : 'تاريخ التسجيل' }}</div>
+                  <div class="col ps-0">
+                    {{ user.createdAt ? (user.createdAt | date:'yyyy-MM-dd HH:mm:ss') : '-' }}
+                  </div>
+                  <div class="col-auto ps-0"></div>
+                </div>
+
+                <hr class="my-4 mx-0" style="width: 100%;">
+                <!-- Name -->
+                <div class="row mb-4">
+                  <div class="col-auto fw-bold" style="min-width: 140px;">{{ language === 'en' ? 'Name' : 'الاسم' }}</div>
+                  <div class="col ps-0">
+                    {{ user.firstName && user.lastName ? (user.firstName + ' ' + user.lastName) : '-' }}
+                  </div>
+                </div>
+
+                <hr class="my-4 mx-0" style="width: 100%;">
+                <!-- Contact Email -->
+                <div class="row mb-4">
+                  <div class="col ps-0">
+                    <div class="d-flex align-items-center">
+                      <span class="fw-bold me-3" style="min-width: 140px;">{{ language === 'en' ? 'Contact Email' : 'البريد الإلكتروني' }}</span>
+                      <span *ngIf="!editEmail">{{ user.contactEmail || user.email }}</span>
+                      <input *ngIf="editEmail" [(ngModel)]="editEmailValue"
+                             class="form-control form-control-sm d-inline-block ms-2"
+                             style="width: 180px;">
+                      <button class="btn btn-primary btn-sm ms-auto" (click)="toggleEdit('email')">✎ {{ language === 'en' ? 'Update' : 'تعديل' }}</button>
+                      <button *ngIf="editEmail" class="btn btn-success btn-sm ms-2" (click)="saveEdit('email')">{{ language === 'en' ? 'Save' : 'حفظ' }}</button>
+                    </div>
+                  </div>
+                </div>
+
+                <hr class="my-4 mx-0" style="width: 100%;">
+                <!-- Contact Phone -->
+                <div class="row mb-4">
+                  <div class="col-auto fw-bold" style="min-width: 140px;">{{ language === 'en' ? 'Contact Phone' : 'رقم الجوال' }}</div>
+                  <div class="col ps-0">
+                    <span *ngIf="!editPhone">{{ user.phoneNumber || '-' }}</span>
+                    <input *ngIf="editPhone" [(ngModel)]="editPhoneValue"
+                           class="form-control form-control-sm d-inline-block"
+                           style="width: 180px;">
+                  </div>
+                  <div class="col-auto ps-0">
+                    <button class="btn btn-primary btn-sm" (click)="toggleEdit('phone')">✎ {{ language === 'en' ? 'Update' : 'تعديل' }}</button>
+                    <button *ngIf="editPhone" class="btn btn-success btn-sm ms-2" (click)="saveEdit('phone')">{{ language === 'en' ? 'Save' : 'حفظ' }}</button>
+                  </div>
+                </div>
+
+                <div class="row mb-4">
+                  <div class="col-auto fw-bold" style="min-width: 140px;">{{ language === 'en' ? 'Password' : 'كلمة المرور' }}</div>
+                  <div class="col ps-0">
+                    <span *ngIf="!editPassword">********</span>
+                    <input *ngIf="editPassword" [(ngModel)]="editPasswordValue"
+                           class="form-control form-control-sm d-inline-block"
+                           style="width: 180px;">
+                  </div>
+                  <div class="col-auto ps-0">
+                    <button *ngIf="!editPassword" class="btn btn-primary btn-sm" (click)="toggleEdit('password')">✎ {{ language === 'en' ? 'Update' : 'تعديل' }}</button>
+                    <button *ngIf="editPassword" class="btn btn-success btn-sm ms-2" (click)="saveEdit('password')">{{ language === 'en' ? 'Save' : 'حفظ' }}</button>
+                    <button *ngIf="editPassword" class="btn btn-secondary btn-sm ms-2" (click)="toggleEdit('password')">{{ language === 'en' ? 'Cancel' : 'إلغاء' }}</button>
+                  </div>
+                </div>
+
+                <hr class="my-4 mx-0" style="width: 100%;">
+
+                <div class="d-flex justify-content-between mb-3">
+                  <h6 class="fw-bold mb-0">{{ language === 'en' ? 'My watched listings & community' : 'الإعلانات المحفوظة والمجتمع' }}</h6>
+                  <button class="btn btn-outline-primary btn-sm" (click)="goToWatchList()">
+                    {{ language === 'en' ? 'View all' : 'عرض الكل' }}
+                  </button>
+                </div>
+
+                <hr>
+                <div class="mb-3">
+                  <button class="btn btn-outline-danger" (click)="onDeleteAccount()">{{ language === 'en' ? 'Delete my account' : 'حذف حسابي' }}</button>
+                  <div class="text-muted mt-2" style="font-size: 0.95em;">
+                    {{ language === 'en' ? 'Once you delete the account, there is no going back, please be certain.' : 'بمجرد حذف الحساب لا يمكن التراجع، يرجى التأكد.' }}
+                  </div>
+                </div>
+
+                <button class="btn btn-outline-secondary float-end" (click)="onLogout()">{{ language === 'en' ? 'Logout' : 'تسجيل الخروج' }}</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngSwitchCase="'create-listing'">
+      <ng-container *ngIf="listingCount < maxListings; else limitExceeded">
+        <app-create-listing></app-create-listing>
+      </ng-container>
+      <ng-template #limitExceeded>
+        <div class="alert alert-warning text-center my-4">
+          {{ language === 'en'
+             ? ('You have exceeded the number of allowed listings (' + maxListings + ').')
+             : ('لقد تجاوزت عدد العقارات المسموح بها (' + maxListings + ').') }}
+        </div>
+      </ng-template>
+    </div>
+
+    <!-- Properties Tab -->
+    <div *ngSwitchCase="'properties'">
+      <div *ngIf="propertiesLoading" class="text-center my-4">
+        <span class="spinner-border spinner-border-sm"></span>
+        {{ language === 'en' ? 'Loading properties...' : 'جاري تحميل العقارات...' }}
+      </div>
+
+      <div *ngIf="!propertiesLoading && properties.length === 0" class="alert alert-info mt-4">
+        {{ language === 'en' ? 'No properties found.' : 'لم يتم العثور على عقارات.' }}
+      </div>
+
+      <div *ngIf="activeTab === 'properties' && !showDetails" class="mb-4">
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <select class="form-select" [(ngModel)]="selectedType" (change)="applyPropertyFilters()">
+              <option value="">{{ language === 'en' ? 'All Property Types' : 'جميع أنواع العقارات' }}</option>
+              <option *ngFor="let type of propertyTypes" [value]="type">{{ type }}</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <select class="form-select" [(ngModel)]="selectedStatus" (change)="applyPropertyFilters()">
+              <option value="">{{ language === 'en' ? 'All Statuses' : 'جميع الحالات' }}</option>
+              <option *ngFor="let status of propertyStatuses" [value]="status">{{ status }}</option>
+            </select>
+          </div>
+        </div>
+
+        <div leaflet
+             [leafletOptions]="propertiesMapOptions"
+             [leafletLayers]="propertyMarkers"
+             style="height: 350px; width: 100%; border-radius: 12px; border: 2px solid #1976d2;">
+        </div>
+      </div>
+
+      <div *ngIf="showMap && activeTab !== 'properties' && !showDetails">
+        <div leaflet [leafletOptions]="mapOptions" style="height:400px; width:100%;"></div>
+      </div>
+
+      <div *ngIf="!showMap && !showDetails">
+        <div *ngFor="let property of filteredProperties" class="card mb-2">
+          <div class="card-body d-flex align-items-center">
+            <img [src]="getPhotoUrl(property.photos?.[0])" alt="photo" style="width: 80px; height: 60px; object-fit: cover; border-radius: 6px; margin-right: 16px;">
+            <div>
+              <div class="fw-bold">{{ property.address }}</div>
+              <div>{{ language === 'en' ? ('$' + (property.price?.toLocaleString?.() ?? property.price)) : (property.price ? ('دينار ' + (property.price | number)) : '') }}</div>
+              <div class="text-muted">{{ property.city }} {{ property.province }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="showDetails && activeTab === 'properties'" class="mt-3">
+        <div class="d-flex justify-content-start mb-2">
+          <button class="btn btn-secondary" (click)="closeDetails()">
+            {{ language === 'en' ? '← Back to map' : '← العودة إلى الخريطة' }}
+          </button>
+        </div>
+        <app-property-details
+          [property]="selectedProperty"
+          (close)="closeDetails()">
+        </app-property-details>
+      </div>
+    </div>
+  </div>
+</div>

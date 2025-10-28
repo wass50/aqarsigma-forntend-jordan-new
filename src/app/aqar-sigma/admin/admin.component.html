@@ -1,0 +1,98 @@
+<div *ngIf="!isLoggedIn" class="alert alert-warning mt-4">
+  You must be logged in to view your account.
+  <button class="btn btn-primary ms-2" (click)="goToLogin()">Login</button>
+</div>
+<div *ngIf="isLoggedIn">
+  <div class="container mt-4">
+    <button class="btn btn-outline-danger float-end" (click)="onLogout()">Logout</button>
+    <h2>Admin Dashboard</h2>
+    <!-- Tabs -->
+    <ul class="nav nav-tabs mb-3">
+      <li class="nav-item">
+        <button class="nav-link" [class.active]="activeTab === 'profile'" (click)="setTab('profile')">Profile</button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link" [class.active]="activeTab === 'dashboard'" (click)="setTab('dashboard')">Dashboard</button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link" [class.active]="activeTab === 'create-realtor'" (click)="setTab('create-realtor')">Create Realtor</button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link" [class.active]="activeTab === 'create-housing-company'" (click)="setTab('create-housing-compnay')">Create Housing Company</button>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [class.active]="activeTab === 'inactiveUsers'" (click)="activeTab = 'inactiveUsers'">
+          Inactive Users
+        </a>
+      </li>
+      <!-- Add more tabs for other admin actions -->
+    </ul>
+    <div [ngSwitch]="activeTab">
+      <div *ngSwitchCase="'profile'">
+        <div class="mb-3 card card-body" *ngIf="admin">
+          <h5>{{ admin.firstName }} {{ admin.lastName }}</h5>
+          <p><strong>Username:</strong> {{ admin.username }}</p>
+          <p><strong>Email:</strong> {{ admin.email }}</p>
+          <p><strong>Role:</strong> {{ admin.role | titlecase }}</p>
+          <p><strong>Status:</strong> {{ admin.isActive ? 'Active' : 'Inactive' }}</p>
+          <!-- Add more fields as needed -->
+        </div>
+      </div>
+      <div *ngSwitchCase="'dashboard'">
+        <p>Welcome, Admin! Select an action above.</p>
+        <!-- Add dashboard widgets here -->
+      </div>
+      <div *ngSwitchCase="'create-realtor'">
+        <app-create-realtor></app-create-realtor>
+      </div>
+
+      <div *ngSwitchCase="'create-housing-compnay'">
+        <app-create-housing-company></app-create-housing-company>
+      </div>
+      <div *ngSwitchCase="'inactiveUsers'">
+        <h5>Users Management</h5>
+        <div *ngIf="loading" class="text-muted">Loading...</div>
+        <table class="table table-bordered" *ngIf="inactiveUsers.length > 0">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>User Name</th>
+              <th>Role</th>
+
+              <th>Email</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let user of inactiveUsers">
+              <td>{{ user.id }}</td>
+              <td>{{ user.firstName }} {{ user.lastName }}</td>
+               <td>{{ user.username }}</td>
+               <td>{{ user.role }}</td>
+              <td>{{ user.email }}</td>
+              <td>{{ user.status }}</td>
+              <td>
+                <!-- Activate button for Pending users -->
+                <button *ngIf="user.status !== 'Active'" class="btn btn-success btn-sm me-1" (click)="activateUser(user)">
+                  Activate
+                </button>
+                <!-- Inactivate button for Active users -->
+                <button *ngIf="user.status === 'Active'" class="btn btn-warning btn-sm me-1" (click)="inactivateUser(user)">
+                  Inactivate
+                </button>
+                <!-- Remove button for any user -->
+                <button class="btn btn-danger btn-sm" (click)="removeUser(user)">
+                  Remove
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div *ngIf="!loading && inactiveUsers.length === 0" class="text-muted">No users found.</div>
+      </div>
+      <!-- Add more cases for other admin actions -->
+    </div>
+  </div>
+</div>

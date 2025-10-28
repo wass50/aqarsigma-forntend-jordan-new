@@ -1,0 +1,108 @@
+<div class="card mb-4">
+  <div class="card-header bg-primary text-white">
+    {{ language === 'en' ? 'Create Housing Company' : 'إنشاء شركة إسكان' }}
+  </div>
+  <div class="card-body">
+    <form [formGroup]="companyForm" (ngSubmit)="onSubmit()">
+      <div class="mb-3">
+        <label class="form-label">
+          {{ language === 'en' ? 'First Name' : 'الاسم الأول' }} <span class="text-danger">*</span>
+        </label>
+        <input type="text" class="form-control" formControlName="firstName" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">
+          {{ language === 'en' ? 'Last Name' : 'اسم العائلة' }} <span class="text-danger">*</span>
+        </label>
+        <input type="text" class="form-control" formControlName="lastName" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">
+          {{ language === 'en' ? 'Email' : 'البريد الإلكتروني' }} <span class="text-danger">*</span>
+        </label>
+        <input type="email" class="form-control" formControlName="email" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">
+          {{ language === 'en' ? 'Phone Number' : 'رقم الهاتف' }} <span class="text-danger">*</span>
+        </label>
+        <input type="text" class="form-control" formControlName="phoneNumber" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">
+          {{ language === 'en' ? 'License Number' : 'رقم الترخيص' }} <span class="text-danger">*</span>
+        </label>
+        <input type="text" class="form-control" formControlName="licenseNumber" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">
+          {{ language === 'en' ? 'Company Name' : 'اسم الشركة' }} <span class="text-danger">*</span>
+        </label>
+        <input type="text" class="form-control" formControlName="companyName" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">
+          {{ language === 'en' ? 'Company Address' : 'عنوان الشركة' }}
+        </label>
+        <input type="text" class="form-control" formControlName="companyAddress">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">
+          {{ language === 'en' ? 'Profile Photo URL' : 'رابط صورة الملف الشخصي' }}
+        </label>
+        <input type="text" class="form-control" formControlName="profilePhotoUrl">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">
+          {{ language === 'en' ? 'Username' : 'اسم المستخدم' }} <span class="text-danger">*</span>
+        </label>
+        <input type="text" class="form-control" formControlName="username" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">
+          {{ language === 'en' ? 'Password' : 'كلمة المرور' }} <span class="text-danger">*</span>
+        </label>
+        <input type="password" class="form-control" formControlName="password" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">
+          {{ language === 'en' ? 'Bio' : 'نبذة' }}
+        </label>
+        <textarea class="form-control" formControlName="bio"></textarea>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">
+          {{ language === 'en' ? 'Website URL' : 'رابط الموقع الإلكتروني' }}
+        </label>
+        <input type="text" class="form-control" formControlName="websiteUrl">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">
+          {{ language === 'en' ? 'Social Links' : 'روابط التواصل الاجتماعي' }}
+          <span class="text-muted">
+            ({{ language === 'en' ? 'comma separated' : 'مفصولة بفواصل' }})
+          </span>
+        </label>
+        <input type="text" class="form-control" formControlName="socialLinks">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">
+          {{ language === 'en' ? 'Profile Photo' : 'صورة الملف الشخصي' }}
+        </label>
+        <input type="file" class="form-control" (change)="onPhotoSelected($event)" accept="image/*" #photoInput>
+        <div *ngIf="photoPreview" class="mb-3">
+          <img [src]="photoPreview" alt="Profile Preview" class="img-thumbnail" style="max-width: 150px;">
+          <button type="button" class="btn btn-danger btn-sm ms-2" (click)="removePhoto(photoInput)">
+            {{ language === 'en' ? 'Remove Photo' : 'حذف الصورة' }}
+          </button>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-success" [disabled]="companyForm.invalid">
+        {{ language === 'en' ? 'Create Company' : 'إنشاء الشركة' }}
+      </button>
+    </form>
+    <div *ngIf="success" class="alert alert-success mt-3">
+      {{ language === 'en' ? 'Housing company created successfully!' : 'تم إنشاء شركة الإسكان بنجاح!' }}
+    </div>
+  </div>
+</div>

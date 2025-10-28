@@ -1,0 +1,141 @@
+<div class="container mt-4">
+  <h2>
+    {{ language === 'en' ? 'Create Realtor Account' : 'إنشاء حساب وسيط عقاري' }}
+  </h2>
+  <form [formGroup]="realtorForm" (ngSubmit)="onSubmit()">
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">
+          {{ language === 'en' ? 'First Name' : 'الاسم الأول' }}
+        </label>
+        <input class="form-control" formControlName="firstName">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">
+          {{ language === 'en' ? 'Last Name' : 'اسم العائلة' }}
+        </label>
+        <input class="form-control" formControlName="lastName">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">
+          {{ language === 'en' ? 'Email' : 'البريد الإلكتروني' }}
+        </label>
+        <input class="form-control" formControlName="email" type="email">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">
+          {{ language === 'en' ? 'Phone Number' : 'رقم الهاتف' }}
+        </label>
+        <input class="form-control" formControlName="phoneNumber">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">
+          {{ language === 'en' ? 'License Number' : 'رقم الترخيص' }}
+        </label>
+        <input class="form-control" formControlName="licenseNumber">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">
+          {{ language === 'en' ? 'Brokerage Name' : 'اسم الشركة' }}
+        </label>
+        <input class="form-control" formControlName="brokerageName">
+      </div>
+      <div class="col-md-12">
+        <label class="form-label">
+          {{ language === 'en' ? 'Brokerage Address' : 'عنوان الشركة' }}
+        </label>
+        <input class="form-control" formControlName="brokerageAddress">
+      </div>
+      <div class="col-md-12">
+        <label class="form-label">
+          {{ language === 'en' ? 'Profile Photo URL' : 'رابط صورة الملف الشخصي' }}
+        </label>
+        <input class="form-control" formControlName="profilePhotoUrl">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">
+          {{ language === 'en' ? 'Username' : 'اسم المستخدم' }}
+        </label>
+        <input class="form-control" formControlName="username">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">
+          {{ language === 'en' ? 'Password' : 'كلمة المرور' }}
+        </label>
+        <input class="form-control" formControlName="password" type="password">
+      </div>
+      <div class="col-md-12">
+        <label class="form-label">
+          {{ language === 'en' ? 'Bio' : 'نبذة' }}
+        </label>
+        <textarea class="form-control" formControlName="bio"></textarea>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">
+          {{ language === 'en' ? 'Website URL' : 'رابط الموقع الإلكتروني' }}
+        </label>
+        <input class="form-control" formControlName="websiteUrl">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">
+          {{ language === 'en' ? 'Social Links' : 'روابط التواصل الاجتماعي' }}
+          <span class="text-muted">
+            ({{ language === 'en' ? 'comma separated' : 'مفصولة بفواصل' }})
+          </span>
+        </label>
+        <input class="form-control" formControlName="socialLinks">
+      </div>
+    </div>
+    <div class="col-md-12">
+      <label class="form-label">
+        {{ language === 'en' ? 'Profile Photo' : 'صورة الملف الشخصي' }}
+      </label>
+      <input type="file" class="form-control" (change)="onPhotoSelected($event)" accept="image/*" #photoInput>
+      <div *ngIf="photoPreview" class="mb-3">
+        <img [src]="photoPreview" alt="Profile Preview" class="img-thumbnail" style="max-width: 150px;">
+        <button type="button" class="btn btn-danger btn-sm ms-2" (click)="removePhoto(photoInput)">
+          {{ language === 'en' ? 'Remove Photo' : 'إزالة الصورة' }}
+        </button>
+      </div>
+    </div>
+
+    <!-- City select -->
+    <div class="mb-3">
+      <label class="form-label">
+        {{ language === 'en' ? 'City' : 'المدينة' }}
+        <span class="text-danger">*</span>
+      </label>
+      <select class="form-select" formControlName="cityId" required (change)="onCityChange()">
+        <option value="" disabled selected>
+          {{ language === 'en' ? 'Select City' : 'اختر المدينة' }}
+        </option>
+        <option *ngFor="let city of cities" [value]="city.id">
+          {{ language === 'en' ? city.nameEn : city.nameAr }}
+        </option>
+      </select>
+    </div>
+
+    <!-- Districts multi-select (show only if city has districts) -->
+    <div class="mb-3" *ngIf="districts.length > 0">
+      <label for="districtSelect" class="form-label">
+        {{ language === 'en' ? 'Districts (max 3)' : 'المناطق (حد أقصى 3)' }}
+      </label>
+      <select id="districtSelect" class="form-select" multiple formControlName="districtIds" (change)="onDistrictChange()">
+        <option *ngFor="let district of districts" [value]="district.id">
+          {{ language === 'en' ? district.nameEn : district.nameAr }}
+        </option>
+      </select>
+      <div class="form-text text-danger"
+           *ngIf="(realtorForm.value.districtIds || []).length > 3">
+        {{ language === 'en' ? 'You can select up to 3 districts only.' : 'يمكنك اختيار حتى 3 مناطق فقط.' }}
+      </div>
+    </div>
+
+    <button class="btn btn-primary mt-3" type="submit" [disabled]="realtorForm.invalid">
+      {{ language === 'en' ? 'Create Realtor' : 'إنشاء وسيط عقاري' }}
+    </button>
+    <div *ngIf="success" class="alert alert-success mt-3">
+      {{ language === 'en' ? 'Realtor created successfully!' : 'تم إنشاء الوسيط العقاري بنجاح!' }}
+    </div>
+  </form>
+</div>

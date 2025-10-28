@@ -1,0 +1,566 @@
+<div *ngIf="property" class="property-details-panel p-3" style="position:relative;">
+  <button class="btn-close float-end" (click)="close.emit()" aria-label="Close"></button>
+  <h4 class="mb-3">
+    {{ property.address }}
+    <span class="text-muted" style="font-size:1rem;">
+      {{ language === 'ar' ? 'العنوان' : 'Address' }}
+    </span>
+  </h4>
+
+  <button *ngIf="canEditProperty()" class="btn btn-warning btn-sm mb-2" (click)="enableEdit()">
+    {{ language === 'ar' ? 'تعديل' : 'Edit' }}
+  </button>
+  <div *ngIf="isEditMode" class="mt-2">
+    <button class="btn btn-success btn-sm" (click)="saveEdit()">
+      {{ language === 'ar' ? 'حفظ' : 'Save' }}
+    </button>
+    <button class="btn btn-secondary btn-sm ms-2" (click)="cancelEdit()">
+      {{ language === 'ar' ? 'إلغاء' : 'Cancel' }}
+    </button>
+  </div>
+
+  <!-- Section Tabs as anchor links -->
+  <ul class="nav nav-tabs mb-3" id="propertyTabs">
+    <li class="nav-item">
+      <a class="nav-link active" href="#overview-section" (click)="scrollToSection($event, 'overview-section')">
+        {{ language === 'ar' ? 'نظرة عامة' : 'Overview' }}
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="#" (click)="scrollToSection($event, 'property-map')">
+        <i class="bi bi-geo-alt"></i> {{ language === 'ar' ? 'الخريطة' : 'Map' }}
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="#contact-section" (click)="scrollToSection($event, 'contact-section')">
+        {{ language === 'ar' ? 'معلومات التواصل' : 'Contact Info' }}
+      </a>
+    </li>
+  </ul>
+
+  <div style="max-height:70vh; overflow-y:auto; scroll-behavior:smooth;">
+    <!-- Overview -->
+    <section id="overview-section" style="scroll-margin-top:70px;">
+      <h5>{{ language === 'ar' ? 'نظرة عامة' : 'Overview' }}</h5>
+      <!-- Photo grid at the top -->
+      <div class="row mb-4">
+        <!-- Main large photo -->
+        <div class="col-md-8 position-relative">
+          <img *ngIf="property.photos && property.photos.length > 0" [src]="getPhotoUrl(property.photos[0])"
+            alt="Main photo" class="img-fluid rounded mb-3 w-100"
+            style="max-height:400px; object-fit:cover; cursor:pointer;" (click)="openPhotoModal(0)" />
+          <span *ngIf="property.photos && property.photos.length > 3" class="badge bg-dark text-white position-absolute"
+            style="left: 16px; bottom: 16px; font-size: 1rem; opacity: 0.93; cursor:pointer;"
+            (click)="openPhotoModal(currentPhotoIndex)">
+
+            {{ language === 'ar' ? 'مشاهدة جميع الصور' : 'See all' }} {{ property.photos.length }} {{ language === 'ar'
+            ? 'صور' : 'photos' }}
+          </span>
+        </div>
+        <!-- Second and third photos stacked vertically -->
+        <div class="col-md-4 d-flex flex-column justify-content-start position-relative">
+          <div class="position-relative mb-3">
+            <img *ngIf="property.photos && property.photos.length > 1" [src]="getPhotoUrl(property.photos[1])"
+              alt="Photo 2" class="img-fluid rounded w-100" style="height:195px; object-fit:cover; cursor:pointer;"
+              (click)="openPhotoModal(1)" />
+            <!-- Virtual Tour link overlay on the second photo -->
+            <a *ngIf="property.virtualTourUrl" [href]="property.virtualTourUrl" target="_blank"
+              class="position-absolute"
+              style="top: 12px; left: 12px; z-index: 2; background: rgba(0,0,0,0.7); color: #fff; padding: 6px 14px; border-radius: 4px; font-size: 1rem; text-decoration: none;">
+              {{ language === 'ar' ? 'جولة افتراضية' : 'Virtual Tour' }}
+            </a>
+          </div>
+          <div class="position-relative">
+            <img *ngIf="property.photos && property.photos.length > 2" [src]="getPhotoUrl(property.photos[2])"
+              alt="Photo 3" class="img-fluid rounded" style="height:195px; object-fit:cover; cursor:pointer;"
+              (click)="openPhotoModal(2)" />
+            <span *ngIf="property.photos && property.photos.length > 3"
+              class="badge bg-dark text-white position-absolute"
+              style="left: 16px; bottom: 16px; font-size: 1rem; opacity: 0.93; cursor:pointer;"
+              (click)="openPhotoModal(2)">
+
+
+              {{ language === 'ar' ? 'مشاهدة جميع الصور' : 'See all' }} {{ property.photos.length }} {{ language ===
+              'ar' ? 'صور' : 'photos' }}
+
+            </span>
+          </div>
+        </div>
+      </div>
+      <!-- Property info grid below the photo area -->
+      <div class="row mb-3 w-100" style="margin-left:0; margin-right:0;">
+        <div class="col-12 p-0">
+          <div class="d-flex flex-wrap align-items-stretch justify-content-between w-100">
+            <div>
+              <div class="fw-bold" style="line-height:1.2;">
+                {{ property.address }}
+              </div>
+              <div class="text-muted" style="line-height:1.2;">
+                <span *ngIf="property.city">
+                  {{ language === 'ar' ? property.city.nameAr : property.city.nameEn }}
+
+                </span>
+                <span *ngIf="property.district">
+                  {{ language === 'ar' ? property.district.nameAr : property.district.nameEn }}
+                </span>
+                <span *ngIf="property.neighborhood">
+                  {{ language === 'ar' ? property.neighborhood.nameAr : property.neighborhood.nameEn }}
+                </span>
+              </div>
+            </div>
+
+            <div class="text-end mx-4 flex-grow-1" style="min-width:180px;">
+              <ng-container *ngIf="property.listingStatus === 'Sold'; else activeOrOther">
+                <div class="text-muted small mb-1">
+                  {{ language === 'ar' ? 'السعر المعروض:' : 'Listed price:' }} {{ formatPriceRange(property.priceRange)
+                  }}
+                </div>
+              </ng-container>
+              <ng-template #activeOrOther>
+                <div class="text-muted small">
+                  {{ language === 'ar' ? 'مدرج منذ' : 'Listed' }} {{ daysOnMarket }} {{ language === 'ar' ? 'يوم' :
+                  'days' }} {{ language === 'ar' ? 'مضت' : 'ago' }}
+                </div>
+              </ng-template>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="row mb-3 w-100" style="margin-left:0; margin-right:0;">
+        <div class="row w-100 mx-0 align-items-center" style="margin-bottom: 12px;">
+          <div class="col text-center py-2 border-end">
+            <span *ngIf="property.bedroomRange !== undefined">
+              <span class="me-1" aria-label="bed" title="Bedrooms" style="font-size:2rem;">🛏️</span>
+              <b>{{ language === 'ar' ? 'غرف النوم' : 'Bedrooms' }}:</b> {{ property.bedroomRange ?? 0}}
+            </span>
+          </div>
+          <div class="col text-center py-2 border-end">
+            <span *ngIf="property.bathroomRange">
+              <span class="me-1" aria-label="bath" title="Bathrooms" style="font-size:2rem;">🛁</span>
+              <b>{{ language === 'ar' ? 'الحمامات' : 'Bathrooms' }}:</b> {{ property.bathroomRange ?? 0}}
+            </span>
+          </div>
+          <div class="col text-center py-2">
+            <span *ngIf="property.priceRange" style="font-size:0.85em !important;">
+              <span class="me-1" aria-label="price" title="Price Range" style="font-size:1em;">💰</span>
+              <b>{{ language === 'ar' ? 'نطاق السعر' : 'Price Range' }}:</b> {{ formatPriceRange(property.priceRange) }}
+            </span>
+          </div>
+        </div>
+      </div>
+      <!-- Tabs for facts/details/appartments -->
+       <div class="mt-3">
+        <ul class="nav nav-tabs w-100" id="factsTabs" role="tablist">
+          <li class="nav-item flex-fill text-center" role="presentation">
+            <button class="nav-link active w-100" id="key-facts-tab" data-bs-toggle="tab" data-bs-target="#key-facts-pane" type="button" role="tab" aria-controls="key-facts-pane" aria-selected="true">
+              {{ language === 'ar' ? 'حقائق رئيسية' : 'Key Facts' }}
+            </button>
+          </li>
+          <li class="nav-item flex-fill text-center" role="presentation">
+            <button class="nav-link w-100" id="details-tab" data-bs-toggle="tab" data-bs-target="#details-pane" type="button" role="tab" aria-controls="details-pane" aria-selected="false">
+              {{ language === 'ar' ? 'تفاصيل' : 'Details' }}
+            </button>
+          </li>
+          <li class="nav-item flex-fill text-center" role="presentation">
+            <button class="nav-link w-100" id="appartments-tab" data-bs-toggle="tab" data-bs-target="#appartments-pane" type="button" role="tab" aria-controls="appartments-pane" aria-selected="false">
+              {{ language === 'ar' ? 'شقق' : 'Appartments' }}
+            </button>
+          </li>
+        </ul>
+
+        <div class="tab-content border border-top-0 p-3" id="factsTabsContent">
+          <!-- Key Facts Tab -->
+          <div class="tab-pane fade show active" id="key-facts-pane" role="tabpanel" aria-labelledby="key-facts-tab">
+            <div class="row">
+              <!-- Left column: original key facts -->
+              <div class="col-lg-7 col-md-6">
+                <div class="fw-bold mb-3">
+                  {{ language === 'ar' ? 'حقائق' : 'Key facts' }} {{ property.address }}
+                </div>
+
+                <div class="mb-2 d-flex">
+                  <span class="text-secondary" style="min-width:160px;"><b>{{ language === 'ar' ? 'اسم المشروع' : 'Project Name' }}:</b></span>
+                  <span>{{ property.projectName || (language === 'ar' ? 'غير متوفر' : 'N/A') }}</span>
+                </div>
+
+                <div class="mb-2 d-flex">
+                  <span class="text-secondary" style="min-width:160px;"><b>{{ language === 'ar' ? 'المطور' : 'Builder' }}:</b></span>
+                  <span>{{ property.builder || (language === 'ar' ? 'غير متوفر' : 'N/A') }}</span>
+                </div>
+
+                <div class="mb-2 d-flex">
+                  <span class="text-secondary" style="min-width:160px;"><b>{{ language === 'ar' ? 'تاريخ الإنجاز المتوقع' : 'Est. Completion Date' }}:</b></span>
+                  <span>{{ property.estimatedCompletionDate | date:'yyyy-MM-dd' }}</span>
+                </div>
+
+                <div class="mb-2 d-flex">
+                  <span class="text-secondary" style="min-width:160px;"><b>{{ language === 'ar' ? 'بدء البيع' : 'Sale Started' }}:</b></span>
+                  <span>{{ property.saleStarted || (language === 'ar' ? 'غير متوفر' : 'N/A') }}</span>
+                </div>
+
+                <div class="mb-2 d-flex">
+                  <span class="text-secondary" style="min-width:160px;"><b>{{ language === 'ar' ? 'عدد الوحدات' : 'Number of Units' }}:</b></span>
+                  <span>{{ property.numberOfUnits ?? (language === 'ar' ? 'غير متوفر' : 'N/A') }}</span>
+                </div>
+
+                <div class="mb-2 d-flex">
+                  <span class="text-secondary" style="min-width:160px;"><b>{{ language === 'ar' ? 'عدد الطوابق' : 'Number of Floors' }}:</b></span>
+                  <span>{{ property.numberOfFloors ?? (language === 'ar' ? 'غير متوفر' : 'N/A') }}</span>
+                </div>
+
+                <div class="mb-2 d-flex">
+                  <span class="text-secondary" style="min-width:160px;"><b>{{ language === 'ar' ? 'نطاق المساحة' : 'Area Range' }}:</b></span>
+                  <span>{{ property.areaRange || (language === 'ar' ? 'غير متوفر' : 'N/A') }} m²</span>
+                </div>
+
+                <div class="mb-2 d-flex">
+                  <span class="text-secondary" style="min-width:160px;"><b>{{ language === 'ar' ? 'نطاق السعر' : 'Price Range' }}:</b></span>
+                  <span>{{ formatPriceRange(property.priceRange) }}</span>
+                </div>
+              </div>
+
+              <!-- Right column: additional facts -->
+              <div class="col-lg-5 col-md-6">
+                <div class="mb-2 d-flex" *ngIf="property.listingDate">
+                  <span class="text-secondary" style="min-width:160px;"><b>{{ language === 'ar' ? 'عدد أيام العقار في السوق' : 'Property Days on Market' }}:</b></span>
+                  <span class="text-start">{{ daysOnMarket }} {{ language === 'ar' ? 'يوم' : 'days' }}</span>
+                </div>
+
+                <div class="mb-2 d-flex" *ngIf="property.listingDate">
+                  <span class="text-secondary" style="min-width:160px;"><b>{{ language === 'ar' ? 'تاريخ الإدراج' : 'Listed on' }}:</b></span>
+                  <span class="text-start">{{ property.listingDate | date:'yyyy-MM-dd' }}</span>
+                </div>
+
+                <div class="mb-2 d-flex" *ngIf="property.updatedOn">
+                  <span class="text-secondary" style="min-width:160px;"><b>{{ language === 'ar' ? 'تاريخ التحديث' : 'Updated on' }}:</b></span>
+                  <span class="text-start">{{ property.updatedOn | date:'yyyy-MM-dd' }}</span>
+                </div>
+
+                <div class="mb-2 d-flex">
+                  <span class="text-secondary" style="min-width:140px;"><b>{{ language === 'ar' ? 'الحي' : 'Community' }}:</b></span>
+                  <span class="text-start">{{ language === 'ar' ? property.neighborhood?.nameAr : property.neighborhood?.nameEn }}</span>
+                </div>
+
+                <div class="mb-2 d-flex">
+                  <span class="text-secondary" style="min-width:140px;"><b>{{ language === 'ar' ? 'المنطقة' : 'District' }}:</b></span>
+                  <span class="text-start">{{ language === 'ar' ? property.district?.nameAr : property.district?.nameEn }}</span>
+                </div>
+
+                <div class="mb-2 d-flex">
+                  <span class="text-secondary" style="min-width:140px;"><b>{{ language === 'ar' ? 'البلدية' : 'Municipality' }}:</b></span>
+                  <span class="text-start">{{ language === 'ar' ? property.city?.nameAr : property.city?.nameEn }}</span>
+                </div>
+              </div>
+
+              <!-- Description tabs -->
+              <div class="mb-2" style="width:100%;">
+                <b>{{ language === 'ar' ? 'الوصف' : 'Description' }}:</b>
+                <ul class="nav nav-tabs mt-2 w-100 justify-content-between" id="descTabs" role="tablist" style="gap: 32px;">
+                  <li class="nav-item flex-fill text-center" role="presentation" style="margin-right:16px;">
+                    <button class="nav-link active w-100" id="desc-english-tab" data-bs-toggle="tab" data-bs-target="#desc-english-pane" type="button" role="tab" aria-controls="desc-english-pane" [attr.aria-selected]="language === 'en'">
+                      {{ language === 'ar' ? 'الوصف بالإنجليزية' : 'English Description' }}
+                    </button>
+                  </li>
+                  <li class="nav-item flex-fill text-center" role="presentation">
+                    <button class="nav-link w-100" id="desc-arabic-tab" data-bs-toggle="tab" data-bs-target="#desc-arabic-pane" type="button" role="tab" aria-controls="desc-arabic-pane" [attr.aria-selected]="language === 'ar'">
+                      {{ language === 'ar' ? 'الوصف بالعربية' : 'Arabic Description' }}
+                    </button>
+                  </li>
+                </ul>
+
+                <div class="tab-content border border-top-0 p-2" id="descTabsContent">
+                  <div class="tab-pane fade" id="desc-english-pane" role="tabpanel" aria-labelledby="desc-english-tab"
+                       [class.show]="language === 'en'" [class.active]="language === 'en'" [attr.dir]="'ltr'">
+                    <div class="text-muted small" style="white-space:pre-line;">
+                      {{ showFullDescription ? (property.description || '') : (property.description ? (property.description | slice:0:400) : '') }}
+                      <span *ngIf="!showFullDescription && (property.description && property.description.length > 400)">...</span>
+                    </div>
+                    <button
+                      *ngIf="property?.description && property.description.length > 400"
+                      class="btn btn-outline-primary mt-2 w-100"
+                      (click)="showFullDescription = !showFullDescription"
+                      type="button"
+                    >
+                      {{ showFullDescription ? (language === 'ar' ? 'إظهار أقل' : 'Show Less') : (language === 'ar' ? 'إظهار المزيد' : 'Show More') }}
+                    </button>
+                  </div>
+
+                  <div class="tab-pane fade" id="desc-arabic-pane" role="tabpanel" aria-labelledby="desc-arabic-tab"
+                       [class.show]="language === 'ar'" [class.active]="language === 'ar'" [attr.dir]="'rtl'">
+                    <div class="text-muted small" style="white-space:pre-line;">
+                      {{ showFullDescription ? (property.descriptionAr || '') : (property.descriptionAr ? (property.descriptionAr  | slice:0:400) : '') }}
+                      <span *ngIf="!showFullDescription && (property.descriptionAr && property.descriptionAr.length > 400)">...</span>
+                    </div>
+                    <button
+                      *ngIf="property?.descriptionAr && property.descriptionAr.length > 400"
+                      class="btn btn-outline-primary mt-2 w-100"
+                      (click)="showFullDescription = !showFullDescription"
+                      type="button"
+                    >
+                      {{ showFullDescription ? (language === 'ar' ? 'إظهار أقل' : 'Show Less') : (language === 'ar' ? 'إظهار المزيد' : 'Show More') }}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Details Tab (language-aware labels/values) -->
+          <div class="tab-pane fade" id="details-pane" role="tabpanel" aria-labelledby="details-tab">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-2 d-flex">
+                  <span class="text-secondary" style="min-width:140px;"><b>{{ language === 'ar' ? 'اسم المشروع' : 'Project Name' }}:</b></span>
+                  <span>{{ property.projectName || (language === 'ar' ? 'غير متوفر' : 'N/A') }}</span>
+                </div>
+
+                <div class="mb-2 d-flex">
+                  <span class="text-secondary" style="min-width:140px;"><b>{{ language === 'ar' ? 'المطور' : 'Builder' }}:</b></span>
+                  <span>{{ property.builder || (language === 'ar' ? 'غير متوفر' : 'N/A') }}</span>
+                </div>
+
+                <div class="mb-2 d-flex">
+                  <span class="text-secondary" style="min-width:140px;"><b>{{ language === 'ar' ? 'تاريخ الإنجاز المتوقع' : 'Est. Completion Date' }}:</b></span>
+                  <span>{{ property.estimatedCompletionDate | date:'yyyy-MM-dd' }}</span>
+                </div>
+
+                <div class="mb-2 d-flex">
+                  <span class="text-secondary" style="min-width:140px;"><b>{{ language === 'ar' ? 'بدء البيع' : 'Sale Started' }}:</b></span>
+                  <span>{{ property.saleStarted || (language === 'ar' ? 'غير متوفر' : 'N/A') }}</span>
+                </div>
+
+                <div class="mb-2 d-flex">
+                  <span class="text-secondary" style="min-width:140px;"><b>{{ language === 'ar' ? 'عدد الوحدات' : 'Number of Units' }}:</b></span>
+                  <span>{{ property.numberOfUnits ?? (language === 'ar' ? 'غير متوفر' : 'N/A') }}</span>
+                </div>
+
+                <div class="mb-2 d-flex">
+                  <span class="text-secondary" style="min-width:140px;"><b>{{ language === 'ar' ? 'عدد الطوابق' : 'Number of Floors' }}:</b></span>
+                  <span>{{ property.numberOfFloors ?? (language === 'ar' ? 'غير متوفر' : 'N/A') }}</span>
+                </div>
+
+                <div class="mb-2 d-flex">
+                  <span class="text-secondary" style="min-width:140px;"><b>{{ language === 'ar' ? 'نطاق المساحة' : 'Area Range' }}:</b></span>
+                  <span>{{ property.areaRange || (language === 'ar' ? 'غير متوفر' : 'N/A') }} م²</span>
+                </div>
+
+                <div class="mb-2 d-flex">
+                  <span class="text-secondary" style="min-width:140px;"><b>{{ language === 'ar' ? 'نطاق السعر' : 'Price Range' }}:</b></span>
+                  <span>{{ formatPriceRange(property.priceRange) }}</span>
+                </div>
+
+                <div class="mb-2 d-flex">
+                  <span class="text-secondary" style="min-width:140px;"><b>{{ language === 'ar' ? 'غرف النوم' : 'Bedrooms' }}:</b></span>
+                  <span>{{ property.bedroomRange ?? 'N/A' }}</span>
+                </div>
+
+                <div class="mb-2 d-flex">
+                  <span class="text-secondary" style="min-width:140px;"><b>{{ language === 'ar' ? 'الحمامات' : 'Bathrooms' }}:</b></span>
+                  <span>{{ property.bathroomRange ?? 'N/A' }}</span>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="mb-2 d-flex">
+                  <span class="text-secondary" style="min-width:140px;"><b>{{ language === 'ar' ? 'نوع العقار' : 'Property Type' }}:</b></span>
+                  <span>{{ property.propertyType || 'N/A' }}</span>
+                </div>
+
+                <div class="mb-2 d-flex">
+                  <span class="text-secondary" style="min-width:140px;"><b>{{ language === 'ar' ? 'الحالة' : 'Status' }}:</b></span>
+                  <span>{{ property.listingStatus || 'N/A' }}</span>
+                </div>
+
+                <div class="mb-2 d-flex">
+                  <span class="text-secondary" style="min-width:140px;"><b>{{ language === 'ar' ? 'الحي' : 'Community' }}:</b></span>
+                  <span>{{ property.neighborhood?.nameEn }} <span class="text-muted">({{ property.neighborhood?.nameAr }})</span></span>
+                </div>
+
+                <div class="mb-2 d-flex">
+                  <span class="text-secondary" style="min-width:140px;"><b>{{ language === 'ar' ? 'المنطقة' : 'District' }}:</b></span>
+                  <span>{{ property.district?.nameEn }} <span class="text-muted">({{ property.district?.nameAr }})</span></span>
+                </div>
+
+                <div class="mb-2 d-flex">
+                  <span class="text-secondary" style="min-width:140px;"><b>{{ language === 'ar' ? 'البلدية' : 'Municipality' }}:</b></span>
+                  <span>{{ property.city?.nameEn }} <span class="text-muted">({{ property.city?.nameAr }})</span></span>
+                </div>
+
+                <div class="mb-2 d-flex">
+                  <span class="text-secondary" style="min-width:140px;"><b>{{ language === 'ar' ? 'تاريخ الإدراج' : 'Listed on' }}:</b></span>
+                  <span>{{ property.listingDate | date:'yyyy-MM-dd' }}</span>
+                </div>
+
+                <div class="mb-2 d-flex" *ngIf="property.updatedOn">
+                  <span class="text-secondary" style="min-width:140px;"><b>{{ language === 'ar' ? 'تاريخ التحديث' : 'Updated on' }}:</b></span>
+                  <span>{{ property.updatedOn | date:'yyyy-MM-dd' }}</span>
+                </div>
+
+                <div class="mb-2 d-flex">
+                  <span class="text-secondary" style="min-width:140px;"><b>{{ language === 'ar' ? 'عدد الأيام في السوق' : 'Days on Market' }}:</b></span>
+                  <span>{{ daysOnMarket }} {{ language === 'ar' ? 'يوم' : 'days' }}</span>
+                </div>
+
+                <div class="mb-2 d-flex">
+                  <span class="text-secondary" style="min-width:140px;"><b>{{ language === 'ar' ? 'المرافق' : 'Amenities' }}:</b></span>
+                  <span>{{ property.amenities || 'N/A' }}</span>
+                </div>
+
+                <div class="mb-2 d-flex">
+                  <span class="text-secondary" style="min-width:140px;"><b>{{ language === 'ar' ? 'المياه' : 'Water Supply' }}:</b></span>
+                  <span>{{ language === 'ar' ? (property.waterSupply || property.waterSupply) : (property.waterSupply || 'N/A') }}</span>
+                </div>
+
+                <div class="mb-2 d-flex">
+                  <span class="text-secondary" style="min-width:140px;"><b>{{ language === 'ar' ? 'نوع التدفئة' : 'Heating Type' }}:</b></span>
+                  <span>{{ language === 'ar' ? (property.heatingType || property.heatingType) : (property.heatingType || 'N/A') }}</span>
+                </div>
+
+                <div class="mb-2 d-flex">
+                  <span class="text-secondary" style="min-width:140px;"><b>{{ language === 'ar' ? 'نوع التبريد' : 'Cooling Type' }}:</b></span>
+                  <span>{{ language === 'ar' ? (property.coolingType || property.coolingType) : (property.coolingType || 'N/A') }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Appartments Tab and remainder unchanged (use language ternaries where needed) -->
+          <div class="tab-pane fade" id="appartments-pane" role="tabpanel" aria-labelledby="appartment-tab">
+            <!-- apartments table kept as in original but with language-aware headers -->
+            <table class="table table-bordered align-middle">
+              <thead>
+                <tr>
+                  <th>{{ language === 'ar' ? 'تفاصيل الشقة' : 'Apartment Details' }}</th>
+                  <th>{{ language === 'ar' ? 'مخطط الطابق' : 'Floor Plan' }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let apt of getFilteredApartments()">
+                  <td>
+                    <div class="d-flex align-items-center mb-1" style="font-size:1.1em; gap:12px;">
+                      <span>{{ apt.price | number }} JOD</span>
+                      <span>#{{ apt.unitNumber }}</span>
+                      <span>{{ apt.floor }}</span>
+                    </div>
+                    <div class="d-flex align-items-center mb-1" style="font-size:1.3em; gap:12px;">
+                      <span title="Bedrooms">🛏️ {{ apt.bedrooms }}</span>
+                      <span title="Bathrooms">🛁 {{ apt.bathrooms }}</span>
+                      <span title="Area">📐 {{ apt.area }} m²</span>
+                    </div>
+                    <div class="d-flex flex-wrap" style="gap:8px;">
+                      <span *ngFor="let feature of getFeatureArray(apt.features)" class="badge bg-light text-dark border">
+                        {{ feature }}
+                      </span>
+                    </div>
+                  </td>
+                  <td>
+                    <img *ngIf="apt.floorPlan"
+                         [src]="getFloorPlanSrc(apt.floorPlan)"
+                         alt="Floor Plan"
+                         style="width: 150x; height: 150px; object-fit: contain; cursor: pointer; border: 1px solid #ccc; border-radius: 6px;"
+                         (click)="handleFloorPlanClick(apt.floorPlan)">
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+
+
+
+
+
+
+
+
+          <!-- Property info below the photo grid -->
+
+          <div id="property-map" style="width:100%; height:350px; border-radius:8px; border:1px solid #ddd;"></div>
+
+
+
+        
+      
+
+
+
+
+  <div class="card contact-info-card mb-4" id="contact-section" *ngIf="contactInfo">
+    <div class="contact-info-header">{{ language === 'ar' ? 'معلومات التواصل' : 'Contact Information' }}</div>
+    <div class="card-body">
+      <ng-container *ngIf="contactType === 'housing_company' && contactInfo.user">
+        <div class="row align-items-center g-3">
+          <div class="col-auto d-flex flex-column align-items-center justify-content-center" style="min-width:110px;">
+            <img
+              [src]="getProfilePhotoSrc(contactInfo.profilePhoto || contactInfo.profilePhotoUrl) || 'https://ui-avatars.com/api/?name=' + contactInfo.user.firstName + '+' + contactInfo.user.lastName"
+              [alt]="language === 'ar' ? 'صورة الوكيل' : 'Realtor Photo'"
+              style="width:150px;height:150px;border-radius:12px;object-fit:cover;box-shadow:0 2px 8px #0002;"
+              class="mb-2"
+            />
+            <span *ngIf="contactInfo.licenseNumber" class="badge bg-secondary mt-1" style="font-size:0.85rem;">
+              #{{ contactInfo.licenseNumber }}
+            </span>
+          </div>
+
+          <div class="col" [ngClass]="{'text-start': language === 'en', 'text-end': language === 'ar'}">
+            <div class="mb-1">
+              <span class="fw-bold" style="font-size:1.2rem;">
+                {{ contactInfo.user.firstName }} {{ contactInfo.user.lastName }}
+              </span>
+              <span class="text-muted ms-2" style="font-size:0.95rem;">
+                {{ language === 'ar' ? '(وكيل شركة إسكان)' : '(Housing Company Agent)' }}
+              </span>
+            </div>
+
+            <div *ngIf="contactInfo.companyName" class="mb-1">
+              <b>{{ language === 'ar' ? 'اسم الشركة' : 'Company Name' }}:</b>
+              <span> {{ contactInfo.companyName }} </span>
+            </div>
+
+            <div *ngIf="contactInfo.companyAddress" class="mb-1">
+              <b>{{ language === 'ar' ? 'العنوان' : 'Address' }}:</b>
+              <span> {{ contactInfo.companyAddress }} </span>
+            </div>
+
+            <div *ngIf="contactInfo.user.phoneNumber" class="mb-1">
+              <b>{{ language === 'ar' ? 'الهاتف' : 'Phone' }}:</b>
+              <a [href]="'tel:' + contactInfo.user.phoneNumber" class="contact-info-detail">
+                {{ contactInfo.user.phoneNumber }}
+              </a>
+            </div>
+
+            <div *ngIf="contactInfo.user.email" class="mb-1">
+              <b>{{ language === 'ar' ? 'البريد الإلكتروني' : 'Email' }}:</b>
+              <a [href]="'mailto:' + contactInfo.user.email" class="contact-info-detail">
+                {{ contactInfo.user.email }}
+              </a>
+            </div>
+
+            <div *ngIf="contactInfo.websiteUrl" class="mb-1">
+              <b>{{ language === 'ar' ? 'الموقع الإلكتروني' : 'Website' }}:</b>
+              <a [href]="contactInfo.websiteUrl" target="_blank" class="contact-info-detail">
+                {{ contactInfo.websiteUrl }}
+              </a>
+            </div>
+
+            <div *ngIf="contactInfo.bio" class="mt-2 text-muted" style="font-size:0.95rem;">
+              {{ contactInfo.bio }}
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+
+  <div *ngIf="isAdmin && property.listingStatus === 'Pending'" class="mt-3">
+    <button class="btn btn-success" (click)="activateProperty(property)" [disabled]="activationInProgress">
+      {{ language === 'ar' ? 'تفعيل العقار' : 'Activate Property' }}
+    </button>
+    <div *ngIf="activationMessage" class="alert alert-info mt-2">
+      {{ activationMessage }}
+    </div>
+  </div>

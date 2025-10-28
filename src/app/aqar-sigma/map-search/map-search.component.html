@@ -1,0 +1,320 @@
+<div *ngIf="!(selectedProperty && showDetails && propertyDetailsInlineMode)" class="mb-3 row align-items-end g-1 flex-wrap" style="overflow: visible;">
+  <div class="col-auto">
+   <select class="form-select form-select-sm border-info"
+        [(ngModel)]="selectedCategory"
+        (change)="filterProperties()">
+  <option value="All">{{ language === 'en' ? 'All Categories' : 'جميع الفئات' }}</option>
+  <option *ngFor="let opt of propertyCategoriesOptions" [value]="opt.code">{{ opt.label }}</option>
+</select>
+  </div>
+  <div class="col-auto">
+    <select id="listingTypeFilter" class="form-select form-select-sm border-info" [(ngModel)]="selectedListingType" (change)="filterProperties()">
+      
+       <option *ngFor="let opt of listingTypesOptions" [value]="opt.code">{{ opt.label }}</option>
+    </select>
+  </div>
+  <!-- Hide property type dropdown if category is 'Land' -->
+  <div class="col-auto" *ngIf="selectedCategory !== 'Land'">
+    <select id="typeFilter" class="form-select form-select-sm border-info" [(ngModel)]="selectedType" (change)="filterProperties()">
+      
+       <option value="All">{{ language === 'en' ? 'All' : 'الكل' }}</option>
+      
+      
+      <option *ngFor="let opt of propertyTypesOptions" [value]="opt.code">{{ opt.label }}</option>
+    </select>
+  </div>
+  <div class="col-auto position-relative" #priceFilterContainer>
+    <button class="btn btn-outline-primary btn-sm" type="button" (click)="togglePriceSlider(); $event.stopPropagation()">
+    <span class="ms-1">
+      {{ actualMinPrice | number }} JOD - {{ maxPrice | number }} JOD   {{ language === 'en' ? 'Price' : 'السعر' }}  
+    </span>
+    </button>
+     <div *ngIf="showPriceSlider"
+         #priceSliderPanel
+         class="bg-white border rounded shadow p-1"
+         style="position: absolute; left: 0; top: 100%; min-width: 150px; z-index: 1050; font-size: 0.92em;">
+      <div class="mb-1">
+        <label class="fw-semibold mb-0" style="font-size:0.95em;">Min Price</label>
+        <div class="position-relative mb-1">
+          <input
+            type="range"
+            class="form-range"
+            [min]="actualMinPrice"
+            [max]="actualMaxPrice"
+            [(ngModel)]="minPrice"
+            [step]="priceStep"
+            (ngModelChange)="onMinPriceChange($event)"
+            style="height:1.2em;"
+          />
+          <span class="position-absolute start-0 top-0 translate-middle-y" style="left:0; top:50%; font-size:0.92em;">
+            {{ (minPrice ?? actualMinPrice) | number }} JOD
+          </span>
+        </div>
+
+        <label class="fw-semibold mb-0" style="font-size:0.95em;">Max Price</label>
+        <div class="position-relative">
+          <input
+            type="range"
+            class="form-range"
+            [min]="actualMinPrice"
+            [max]="actualMaxPrice"
+            [(ngModel)]="maxPrice"
+            [step]="priceStep"
+            (ngModelChange)="onMaxPriceChange($event)"
+            style="height:1.2em;"
+          />
+          <span class="position-absolute end-0 top-0 translate-middle-y" style="right:0; top:50%; font-size:0.92em;">
+            {{ (maxPrice ?? actualMaxPrice) | number }} JOD
+          </span>
+          <a href="#"
+             class="clear-price-filter-link"
+             (click)="clearPriceFilter(); $event.preventDefault()">
+            Clear Price Filter
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-auto">
+    <div class="btn-group position-relative" #activeGroup>
+      <button type="button" class="btn btn-outline-primary btn-sm" [class.active]="selectedStatus === 'Active'" (click)="setActiveStatus()">
+       {{ language === 'en' ? 'Active' : 'معروض' }}    
+        <span *ngIf="activeDateRange" class="ms-1">
+          {{ getActiveRangeLabel() }}
+        </span>
+      </button>
+      <button type="button" class="btn btn-outline-primary btn-sm dropdown-toggle dropdown-toggle-split"
+        (click)="toggleActiveDropdown()"></button>
+      <ul class="dropdown-menu show" #activeDropdown
+          *ngIf="showActiveDropdown"
+          style="position: absolute; top: 100%; left: 0; display: block; z-index: 1000;">
+       <li><a class="dropdown-item" (click)="setActiveDateRange('1')">{{ language === 'en' ? 'Last 1 day' : 'آخر يوم' }}</a></li>
+  <li><a class="dropdown-item" (click)="setActiveDateRange('3')">{{ language === 'en' ? 'Last 3 days' : 'آخر 3 أيام' }}</a></li>
+  <li><a class="dropdown-item" (click)="setActiveDateRange('7')">{{ language === 'en' ? 'Last 7 days' : 'آخر 7 أيام' }}</a></li>
+  <li><a class="dropdown-item" (click)="setActiveDateRange('30')">{{ language === 'en' ? 'Last 30 days' : 'آخر 30 يومًا' }}</a></li>
+  <li><a class="dropdown-item" (click)="setActiveDateRange('90')">{{ language === 'en' ? 'Last 90 days' : 'آخر 90 يومًا' }}</a></li>
+  <li><a class="dropdown-item" (click)="setActiveDateRange('all')">{{ language === 'en' ? 'Listing date - All' : 'تاريخ الإعلان - الكل' }}</a></li>
+  <li><a class="dropdown-item" (click)="setActiveDateRange('more15')">{{ language === 'en' ? 'More than 15 days' : 'أكثر من 15 يومًا' }}</a></li>
+  <li><a class="dropdown-item" (click)="setActiveDateRange('more30')">{{ language === 'en' ? 'More than 30 days' : 'أكثر من 30 يومًا' }}</a></li>
+  <li><a class="dropdown-item" (click)="setActiveDateRange('more60')">{{ language === 'en' ? 'More than 60 days' : 'أكثر من 60 يومًا' }}</a></li>
+  <li><a class="dropdown-item" (click)="setActiveDateRange('more90')">{{ language === 'en' ? 'More than 90 days' : 'أكثر من 90 يومًا' }}</a></li>
+ </ul>
+    </div>
+  </div>
+
+ <div class="col-auto">
+    <div *ngIf="isAdmin" lass="btn-group position-relative">
+      <button type="button" class="btn btn-outline-primary btn-sm" [class.active]="selectedStatus === 'Pending'" (click)="setPendingStatus()">
+        Pending (قيد الانتظار)
+       
+      </button>
+      
+    </div>
+
+ </div>
+
+
+
+
+
+
+
+   <div class="col-auto">
+    <div class="btn-group position-relative" #soldGroup>
+      <button type="button" class="btn btn-outline-secondary btn-sm" [class.active]="selectedStatus === 'Sold'" (click)="setSoldStatus()">
+        {{ language === 'en' ? 'Sold' : 'مباع' }}
+        <span *ngIf="soldDateRange" class="ms-1">
+          {{ getSoldRangeLabel() }}
+        </span>
+      </button>
+      <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle dropdown-toggle-split"
+        (click)="toggleSoldDropdown()"></button>
+      <ul class="dropdown-menu show" #soldDropdown
+          *ngIf="showSoldDropdown"
+          style="position: absolute; top: 100%; left: 0; display: block; z-index: 1000;">
+        <li><a class="dropdown-item" (click)="setSoldDateRange('1')">{{ language === 'en' ? 'Last 1 day' : 'آخر يوم' }}</a></li>
+        <li><a class="dropdown-item" (click)="setSoldDateRange('3')">{{ language === 'en' ? 'Last 3 days' : 'آخر 3 أيام' }}</a></li>
+        <li><a class="dropdown-item" (click)="setSoldDateRange('7')">{{ language === 'en' ? 'Last 7 days' : 'آخر 7 أيام' }}</a></li>
+        <li><a class="dropdown-item" (click)="setSoldDateRange('30')">{{ language === 'en' ? 'Last 30 days' : 'آخر 30 يومًا' }}</a></li>
+        <li><a class="dropdown-item" (click)="setSoldDateRange('90')">{{ language === 'en' ? 'Last 90 days' : 'آخر 90 يومًا' }}</a></li>
+        <li><a class="dropdown-item" (click)="setSoldDateRange('180')">{{ language === 'en' ? 'Last 180 days' : 'آخر 180 يومًا' }}</a></li>
+        <li><a class="dropdown-item" (click)="setSoldDateRange('360')">{{ language === 'en' ? 'Last 360 days' : 'آخر 360 يومًا' }}</a></li>
+        <li><a class="dropdown-item" (click)="setSoldDateRange('2025')">{{ language === 'en' ? 'Year 2025' : 'سنة 2025' }}</a></li>
+        <li><a class="dropdown-item" (click)="setSoldDateRange('2024')">{{ language === 'en' ? 'Year 2024' : 'سنة 2024' }}</a></li>
+        <li><a class="dropdown-item" (click)="setSoldDateRange('2023')">{{ language === 'en' ? 'Year 2023' : 'سنة 2023' }}</a></li>
+        <li><a class="dropdown-item" (click)="setSoldDateRange('2022')">{{ language === 'en' ? 'Year 2022' : 'سنة 2022' }}</a></li>
+        <li><a class="dropdown-item" (click)="setSoldDateRange('2021')">{{ language === 'en' ? 'Year 2021' : 'سنة 2021' }}</a></li>
+        <li><a class="dropdown-item" (click)="setSoldDateRange('2020')">{{ language === 'en' ? 'Year 2020' : 'سنة 2020' }}</a></li>
+        <li><a class="dropdown-item" (click)="setSoldDateRange('2019')">{{ language === 'en' ? 'Year 2019' : 'سنة 2019' }}</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="col-auto position-relative">
+    <button class="btn btn-outline-primary btn-sm" type="button" (click)="toggleMoreFilter(); $event.stopPropagation()">
+       {{ language === 'en' ? 'More' : 'المزيد' }} 
+    </button>
+    <div *ngIf="showMoreFilter"
+         #moreFilterPanel
+         class="bg-white border rounded shadow p-3"
+         style="position: absolute; left: 0; top: 100%; min-width: 600px; z-index: 1050;">
+      <h5 class="mb-3 d-flex justify-content-between align-items-center">
+         {{ language === 'en' ? 'More Filter' : 'تصفية إضافية' }} 
+        <button type="button" class="btn clear-all-link btn-sm p-0 ms-2" (click)="clearMoreFilter()">{{ language === 'en' ? 'Clear All' : 'مسح الكل'}}</button>
+      </h5>
+      <div class="row">
+        <div class="col-6">
+          <div class="mb-2">
+            <label> {{ language === 'en' ? 'Description contains' : 'الوصف يحتوي على'}} </label>
+            <input type="text" class="form-control" [(ngModel)]="moreFilter.keyword" (ngModelChange)="filterProperties()">
+          </div>
+          <div class="mb-2">
+            <label> {{ language === 'en' ? 'Bedrooms' : 'غرف النوم)' }} </label>
+            <div class="btn-group w-100 mb-2">
+              <button type="button" class="btn btn-sm"
+                [ngClass]="{'btn-primary': moreFilter.bedrooms === null, 'btn-outline-primary': moreFilter.bedrooms !== null}"
+                (click)="setBedroomFilter(null)"> {{ language === 'en' ? 'All' : 'الكل' }}</button>
+              <button type="button" class="btn btn-sm"
+                [ngClass]="{'btn-primary': moreFilter.bedrooms === 1, 'btn-outline-primary': moreFilter.bedrooms !== 1}"
+                (click)="setBedroomFilter(1)">1</button>
+              <button type="button" class="btn btn-sm"
+                [ngClass]="{'btn-primary': moreFilter.bedrooms === 2, 'btn-outline-primary': moreFilter.bedrooms !== 2}"
+                (click)="setBedroomFilter(2)">2</button>
+              <button type="button" class="btn btn-sm"
+                [ngClass]="{'btn-primary': moreFilter.bedrooms === 3, 'btn-outline-primary': moreFilter.bedrooms !== 3}"
+                (click)="setBedroomFilter(3)">3</button>
+              <button type="button" class="btn btn-sm"
+                [ngClass]="{'btn-primary': moreFilter.bedrooms === 4, 'btn-outline-primary': moreFilter.bedrooms !== 4}"
+                (click)="setBedroomFilter(4)">4</button>
+              <button type="button" class="btn btn-sm"
+                [ngClass]="{'btn-primary': moreFilter.bedrooms === 5, 'btn-outline-primary': moreFilter.bedrooms !== 5}"
+                (click)="setBedroomFilter(5)">5+</button>
+            </div>
+          </div>
+          <div class="mb-2">
+            <label> {{ language === 'en' ? 'Bathrooms' : 'الحمامات' }} </label>
+            <div class="btn-group w-100 mb-2">
+              <button type="button" class="btn btn-sm"
+                [ngClass]="{'btn-primary': moreFilter.bathrooms === null, 'btn-outline-primary': moreFilter.bathrooms !== null}"
+                (click)="setBathroomFilter(null)"> {{ language === 'en' ? 'All' : 'الكل' }} </button>
+              <button type="button" class="btn btn-sm"
+                [ngClass]="{'btn-primary': moreFilter.bathrooms === 1, 'btn-outline-primary': moreFilter.bathrooms !== 1}"
+                (click)="setBathroomFilter(1)">1</button>
+              <button type="button" class="btn btn-sm"
+                [ngClass]="{'btn-primary': moreFilter.bathrooms === 2, 'btn-outline-primary': moreFilter.bathrooms !== 2}"
+                (click)="setBathroomFilter(2)">2</button>
+              <button type="button" class="btn btn-sm"
+                [ngClass]="{'btn-primary': moreFilter.bathrooms === 3, 'btn-outline-primary': moreFilter.bathrooms !== 3}"
+                (click)="setBathroomFilter(3)">3</button>
+              <button type="button" class="btn btn-sm"
+                [ngClass]="{'btn-primary': moreFilter.bathrooms === 4, 'btn-outline-primary': moreFilter.bathrooms !== 4}"
+                (click)="setBathroomFilter(4)">4</button>
+              <button type="button" class="btn btn-sm"
+                [ngClass]="{'btn-primary': moreFilter.bathrooms === 5, 'btn-outline-primary': moreFilter.bathrooms !== 5}"
+                (click)="setBathroomFilter(5)">5+</button>
+            </div>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="mb-2">
+            <label> {{ language === 'en' ? 'Area m²' : 'م² المساحة' }} </label>
+            <div class="row align-items-center">
+              <div class="col-6">
+                <label class="fw-semibold mb-1"> {{ language === 'en' ? 'Min Area' : 'المساحة الدنيا' }}</label>
+                <div class="position-relative">
+                  <input type="range"
+                         class="form-range"
+                         [min]="minArea"
+                         [max]="moreFilter.maxArea ?? maxArea"
+                         [(ngModel)]="moreFilter.minArea"
+                         (ngModelChange)="onMinAreaChange($event)">
+                  <span class="position-absolute start-0 top-0 translate-middle-y" style="left:0; top:50%;">
+                    {{ moreFilter.minArea ?? minArea }} م²
+                  </span>
+                </div>
+              </div>
+              <div class="col-6">
+                <label class="fw-semibold mb-1"> {{ language === 'en' ? 'Max Area' : 'المساحة القصوى' }} </label>
+                <div class="position-relative">
+                  <input type="range"
+                         class="form-range"
+                         [min]="moreFilter.minArea ?? minArea"
+                         [max]="maxArea"
+                         [(ngModel)]="moreFilter.maxArea"
+                         (ngModelChange)="onMaxAreaChange($event)">
+                  <span class="position-absolute end-0 top-0 translate-middle-y" style="right:0; top:50%;">
+                    {{ moreFilter.maxArea ?? maxArea }}.  {{ language === 'en' ? 'm²' : 'م²' }} م²
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button class="btn more-filter-apply-btn w-100 mt-2" (click)="applyMoreFilter()">{{ language === 'en' ? 'Apply' : 'تطبيق'}}  </button>
+    </div>
+  </div>
+  <div class="col-auto">
+    <select
+    [(ngModel)]="selectedOwnerType"
+    (change)="filterProperties()"
+    class="form-select form-select-sm border-info"
+    style="width: 135px; font-size: 0.92em; padding: 0.15rem 0.5rem;">
+   
+      <option value="all"> {{ language === 'en' ? 'All Properties' : 'كل العقارات' }} </option>
+      <option value="private"> {{ language === 'en' ? 'Private Properties' : 'عقارات خاصة' </option>
+      <option value="realtor"> {{ language === 'en' ? 'Realtor Properties' : 'عقارات وسيط عقاري' }} </option>
+    </select>
+  </div>
+  <div class="col-auto">
+    <select class="form-select form-select-sm border-info"
+            [(ngModel)]="selectedCitytId"
+            (change)="onCityChange()">
+      <option value=""> {{ language === 'en' ? 'All Cites' : 'جميع المدن' }} </option>
+      <option *ngFor="let c of dropDownCities" [value]="c.id">
+        {{ language === 'en' ? (c.nameEn || c.nameAr) : (c.nameAr || c.nameEn) }}
+      </option>
+    </select>
+  </div>
+  <div class="col-auto">
+    <select class="form-select form-select-sm border-info"
+            [(ngModel)]="selectedDistrictId"
+            (change)="onDistrictChange()">
+      <option value=""> {{ language === 'en' ? 'All Districts' : 'كل المناطق' }} </option>
+      <option *ngFor="let d of dropDownDistricts" [value]="d.id">
+       
+        {{ language === 'en' ? (d.nameEn || d.nameAr) : (d.nameAr || d.nameEn) }}
+       
+      </option>
+    </select>
+  </div>
+  
+</div>
+
+<div *ngIf="selectedProperty && showDetails && propertyDetailsInlineMode" class="property-details-inline">
+  <div class="d-flex justify-content-start mb-2">
+    <button class="btn btn-secondary" (click)="closeDetails()">← {{ language === 'en' ? 'Back to map' : 'العودة للخريطة' }}</button>
+  </div>
+
+  <app-property-details
+    [property]="selectedProperty"
+    (propertyActivated)="onPropertyActivated($event)"
+    (close)="closeDetails()">
+  </app-property-details>
+</div>
+
+<!-- keep map element in DOM; hide it when inline details are active -->
+<div id="map" [hidden]="selectedProperty && showDetails && propertyDetailsInlineMode" style="width:100%; height:400px;"></div>
+
+<!-- Modal for property details -->
+
+<div *ngIf="selectedProperty && showDetails && !propertyDetailsInlineMode" class="modal-backdrop-custom">
+  <div class="modal-custom">
+    <app-property-details
+      [property]="selectedProperty"
+      (propertyActivated)="onPropertyActivated($event)"
+      (close)="showDetails = false">
+    </app-property-details>
+  </div>
+
+
+<!-- Inline property details (when propertyDetailsInlineMode = true) -->

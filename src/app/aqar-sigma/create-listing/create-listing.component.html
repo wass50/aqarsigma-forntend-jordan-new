@@ -1,0 +1,624 @@
+<div class="container-fluid my-4 px-0">
+  <div class="row mx-0">
+    <div class="col-12 px-0">
+      <h2 class="mb-4">
+        {{ language === 'en' ? 'Create New Listing' : 'إنشاء إعلان جديد' }}
+      </h2>
+      <form [formGroup]="listingForm" (ngSubmit)="onSubmit()">
+
+        <div *ngIf="submitAttempted && listingForm.invalid" class="alert alert-danger">
+          {{ language === 'en' ? 'Please fill the following required fields:' : 'يرجى تعبئة الحقول المطلوبة أدناه:' }}
+          <ul>
+            <li *ngFor="let key of listingFormErrors()">{{ key }}</li>
+          </ul>
+        </div> 
+
+        <!-- Property Info -->
+        <div class="card mb-4 create-listing-card">
+          <div class="card-header bg-primary text-white">
+            {{ language === 'en' ? 'Address Info' : 'معلومات العنوان' }}
+          </div>
+          <div class="card-body row g-3">
+            <div class="col-md-6">
+              <label class="form-label"> 
+                {{ language === 'en' ? 'Address' : 'العنوان' }}
+                <span class="text-danger">*</span>
+              </label>
+              <input type="text" class="form-control" formControlName="address" required>
+            </div>
+        
+            <div class="col-md-3">
+              <label class="form-label">
+                {{ language === 'en' ? 'City' : 'المدينة' }}
+                <span class="text-danger">*</span>
+              </label>
+              <select class="form-select" formControlName="cityId" required (change)="onCityChange()">
+                <option value="" disabled selected>
+                  {{ language === 'en' ? 'Select City' : 'اختر المدينة' }}
+                </option>
+                <option *ngFor="let city of cities" [value]="city.id">
+                  {{ language === 'en' ? city.nameEn : city.nameAr }}
+                </option>
+              </select>
+            </div>
+
+            <!-- District Field: Dropdown if Amman, Textbox otherwise -->
+            <div class="col-md-3">
+              <label for="district" class="form-label">
+                {{ language === 'en' ? 'District' : 'المنطقة' }}
+                <span class="text-danger">*</span>
+              </label>
+              <ng-container *ngIf="districts.length > 0; else districtTextBox">
+                <select id="district" class="form-select" formControlName="districtId" required (change)="onDistrictChange()">
+                  <option value="" disabled selected>
+                    {{ language === 'en' ? 'Select District' : 'اختر المنطقة' }}
+                  </option>
+                  <option *ngFor="let district of districts" [value]="district.id">
+                    {{ language === 'en' ? district.nameEn : district.nameAr }}
+                  </option>
+                </select>
+              </ng-container>
+              <ng-template #districtTextBox>
+                <input id="district" type="text" class="form-control" formControlName="district"
+                  [placeholder]="language === 'en' ? 'Enter District' : 'أدخل المنطقة'">
+              </ng-template>
+            </div>
+
+            <!-- Neighborhood Field: Dropdown if Amman, Textbox otherwise -->
+            <div class="col-md-3">
+              <label class="form-label">
+                {{ language === 'en' ? 'Neighborhood' : 'الحي' }}
+                <span class="text-danger">*</span>
+              </label>
+              <ng-container *ngIf="neighborhoods.length > 0; else neighborhoodTextBox">
+                <select class="form-select" formControlName="neighborhoodId" required [disabled]="!listingForm.get('district')?.value">
+                  <option value="" disabled selected>
+                    {{ language === 'en' ? 'Select Neighborhood' : 'اختر الحي' }}
+                  </option>
+                  <option *ngFor="let n of neighborhoods" [value]="n.id">
+                    {{ language === 'en' ? n.nameEn : n.nameAr }}
+                  </option>
+                </select>
+              </ng-container>
+              <ng-template #neighborhoodTextBox>
+                <input type="text" class="form-control" formControlName="neighborhood"
+                  [placeholder]="language === 'en' ? 'Enter Neighborhood' : 'أدخل الحي'">
+              </ng-template>
+            </div>
+        
+            <div class="col-md-3">
+              <label class="form-label">
+                {{ language === 'en' ? 'Latitude' : 'دائرة العرض' }}
+                <span class="text-danger">*</span>
+              </label>
+              <input type="number" class="form-control" formControlName="lat" required>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">
+                {{ language === 'en' ? 'Longitude' : 'خط الطول' }}
+                <span class="text-danger">*</span>
+              </label>
+              <input type="number" class="form-control" formControlName="lng" required>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            class="btn btn-outline-primary"
+            [disabled]="
+              !listingForm.get('cityId')?.value ||
+              !listingForm.get('districtId')?.value ||
+              !listingForm.get('lat')?.value ||
+              !listingForm.get('lng')?.value
+            "
+            (click)="onValidateAddress()"
+          >
+            {{ language === 'en' ? 'Validate Address' : 'تحقق من العنوان' }}
+          </button>
+          <div *ngIf="districtValidationMessage" class="alert alert-danger mt-2">
+            {{ districtValidationMessage }}
+          </div>
+          <div *ngIf="districtValidationSuccess" class="alert alert-success mt-2">
+            {{ districtValidationSuccess }}
+          </div>
+        </div>
+
+        <!-- Listing Info -->
+        <div class="card mb-4 create-listing-card">
+          <div class="card-header bg-primary text-white">
+            {{ language === 'en' ? 'Listing Info' : 'معلومات الإعلان' }}
+          </div>
+          <div class="card-body row g-3">
+            <div class="col-md-4">
+              <label class="form-label">
+                {{ language === 'en' ? 'Property Category' : 'فئة العقار' }}
+                <span class="text-danger">*</span>
+              </label>
+              <select class="form-select" formControlName="propertyCategory" required>
+                <option value="" disabled selected>
+                  {{ language === 'en' ? 'Select category' : 'اختر الفئة' }}
+                </option>
+                <option *ngFor="let c of propertyCategories" [value]="c.value">
+                  {{ language === 'en' ? c.labelEn : (c.labelAr || c.labelEn) }}
+                </option>
+              </select>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label">
+                {{ language === 'en' ? 'Listing Type' : 'نوع الإعلان' }}
+                <span class="text-danger">*</span>
+              </label>
+              <select class="form-select" formControlName="listingType" required>
+                <option value="" disabled selected>
+                  {{ language === 'en' ? 'Select Listing Type' : 'اختر نوع الإعلان' }}
+                </option>
+                <option *ngFor="let lt of listingTypes" [value]="lt.value">
+                  {{ language === 'en' ? lt.labelEn : (lt.labelAr || lt.labelEn) }}
+                </option>
+              </select>
+            </div>
+            <div class="col-md-4" *ngIf="listingForm.get('propertyCategory')?.value === 'Residential'">
+              <label class="form-label fw-semibold">
+                {{ language === 'en' ? 'Property Type' : 'نوع العقار' }}
+                <span class="text-danger">*</span>
+              </label>
+              <select class="form-select" formControlName="propertyType" [required]="listingForm.get('propertyCategory')?.value === 'Residential'">
+                <option value="" disabled selected>
+                  {{ language === 'en' ? 'Select property type' : 'اختر نوع العقار' }}
+                </option>
+                <option *ngFor="let pt of propertyTypes" [value]="pt.value">
+                  {{ language === 'en' ? pt.labelEn : (pt.labelAr || pt.labelEn) }}
+                </option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">
+                {{ language === 'en' ? 'Price' : 'السعر' }}
+                <span class="text-danger">*</span>
+              </label>
+              <input type="number" class="form-control" formControlName="price" required>
+            </div>
+            <div class="col-md-4" *ngIf="listingForm.get('propertyCategory')?.value === 'Residential' "> 
+              <label class="form-label">
+                {{ language === 'en' ? 'Year Built' : 'سنة البناء' }}
+              </label>
+              <input type="number" class="form-control" formControlName="yearBuilt">
+            </div>
+            <div class="col-md-4" *ngIf="listingForm.get('propertyType')?.value === 'Apartment'">
+              <label class="form-label">
+                {{ language === 'en' ? 'Floor' : 'الطابق' }}
+              </label>
+              <select class="form-select" formControlName="floor">
+                <option value="" disabled selected>
+                  {{ language === 'en' ? 'Select Floor' : 'اختر الطابق' }}
+                </option>
+                <option *ngFor="let option of floorOptions" [value]="option.value">
+                  {{ option.label }}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card mb-4 create-listing-card" *ngIf="listingForm.get('propertyCategory')?.value === 'Residential' ">
+          <div class="card-header bg-primary text-white">
+            {{ language === 'en' ? 'Property Details' : 'تفاصيل العقار' }}
+          </div>
+          <div class="card-body row g-3">
+            <div class="col-md-3">
+              <label class="form-label">
+                {{ language === 'en' ? 'Bedrooms' : 'غرف النوم' }}
+                <span class="text-danger" *ngIf="isBedroomsRequired()"> *</span>
+              </label>
+              <input type="number" class="form-control" formControlName="bedrooms"
+                [required]="isBedroomsRequired()">
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">
+                {{ language === 'en' ? 'Bathrooms' : 'الحمامات' }}
+                <span class="text-danger" *ngIf="isBathroomsRequired()"> *</span>
+              </label>
+              <input type="number" class="form-control" formControlName="bathrooms"
+                [required]="isBathroomsRequired()">
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">
+                {{ language === 'en' ? 'Kitchens' : 'المطابخ' }}
+                <span class="text-danger" *ngIf="isKitchensRequired()"> *</span>
+              </label>
+              <input type="number" class="form-control" formControlName="kitchens"
+                [required]="isKitchensRequired()">
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">
+                {{ language === 'en' ? 'Rooms' : 'الغرف' }}
+              </label>
+              <input type="number" class="form-control" formControlName="roomsCount">
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">
+                {{ language === 'en' ? 'Area' : 'المساحة' }}
+              </label>
+              <input type="number" class="form-control" formControlName="area">
+            </div>
+            
+
+
+       
+
+
+
+            <div class="col-md-3" *ngIf="listingForm.get('propertyType')?.value == 'Villa' ">
+              <label class="form-label">
+                {{ language === 'en' ? 'Property Style' : 'نمط العقار' }}
+              </label>
+              <select class="form-select" formControlName="propertyStyle">
+                <option value="" disabled selected>
+                  {{ language === 'en' ? 'Select style' : 'اختر النمط' }}
+                </option>
+                <option value="One Storey">
+                  {{ language === 'en' ? 'One Storey' : 'طابق واحد' }}
+                </option>
+                <option value="Two Storeys">
+                  {{ language === 'en' ? 'Two Storeys' : 'طابقان' }}
+                </option>
+                <option value="Three Storeys">
+                  {{ language === 'en' ? 'Three Storeys' : 'ثلاثة طوابق' }}
+                </option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">
+                {{ language === 'en' ? 'Bathrooms Detail' : 'تفاصيل الحمامات' }}
+              </label>
+              <input type="text" class="form-control" formControlName="bathroomsDetail" placeholder="e.g. 1, 4pc Main floor (مثال: 1، 4 قطع في الطابق الرئيسي)">
+            </div>
+            <div class="col-md-3" *ngIf="listingForm.get('propertyType')?.value == 'Villa' ">
+              <label class="form-label">
+                {{ language === 'en' ? 'Basement Type' : 'نوع القبو' }}
+              </label>
+              <input type="text" class="form-control" formControlName="basement" placeholder="e.g. Finished (مثال: مكتمل)">
+            </div>
+            <div class="col-md-3" *ngIf="listingForm.get('propertyType')?.value == 'Villa' ">
+              <label class="form-label">
+                {{ language === 'en' ? 'Land Frontage' : 'واجهة الأرض' }}
+              </label>
+              <input type="text" class="form-control" formControlName="landFrontage" placeholder="Enter frontage in meters (أدخل الواجهة بالمتر)">
+            </div>
+            <div class="col-md-3" *ngIf="listingForm.get('propertyType')?.value == 'Villa' ">
+              <label class="form-label">
+                {{ language === 'en' ? 'Land Depth' : 'عمق الأرض' }}
+              </label>
+              <input type="text" class="form-control" formControlName="landDepth" placeholder="Enter depth in meters (أدخل العمق بالمتر)">
+            </div>
+            <div class="col-md-3" *ngIf="listingForm.get('propertyType')?.value == 'Villa' ">
+              <label class="form-label">
+                {{ language === 'en' ? 'Land Area' : 'مساحة الأرض' }}
+              </label>
+              <input type="text" class="form-control" formControlName="landArea" placeholder="">
+            </div>
+            <div class="col-md-3" >
+              <label class="form-label">
+                {{ language === 'en' ? 'Facade' : 'الواجهة' }}
+              </label>
+              <select class="form-select" formControlName="facade">
+                <option value="" disabled selected>
+                  {{ language === 'en' ? 'Select facade' : 'اختر اتجاه الواجهة' }}
+                </option>
+                <option value="North">
+                  {{ language === 'en' ? 'North' : 'شمال' }}
+                </option>
+                <option value="South">
+                  {{ language === 'en' ? 'South' : 'جنوب' }}
+                </option>
+                <option value="East">
+                  {{ language === 'en' ? 'East' : 'شرق' }}
+                </option>
+                <option value="West">
+                  {{ language === 'en' ? 'West' : 'غرب' }}
+                </option>
+              </select>
+            </div>
+           
+            
+            <div class="col-md-3" *ngIf="listingForm.get('propertyType')?.value == 'Villa' ">
+              <label class="form-label">
+                {{ language === 'en' ? 'Garage' : 'كراج' }}:
+              </label>
+              <input type="number" class="form-control" formControlName="garage" min="0" placeholder="Enter number of garages (أدخل عدد الكراجات)">
+            </div>
+            <div class="col-md-3" >
+              <label class="form-label">
+                {{ language === 'en' ? 'Parking Places' : 'أماكن الوقوف' }}:
+              </label>
+              <input type="number" class="form-control" formControlName="parkingPlaces" min="0" placeholder="Enter number of parking places (أدخل عدد أماكن الوقوف)">
+            </div>
+            <div class="col-md-3" *ngIf="listingForm.get('propertyType')?.value == 'Villa' ">
+              <label class="form-label">
+                {{ language === 'en' ? 'Total Parking Space' : 'إجمالي مساحة الوقوف' }}:
+              </label>
+              <input type="number" class="form-control" formControlName="totalParkingSpace" min="0" placeholder="Enter total parking space (أدخل إجمالي مساحة الوقوف)">
+            </div>
+
+
+             <div class="col-md-12">
+          <label class="form-label">
+            {{ language === 'en' ? 'Property Features' : 'مميزات العقار' }}
+          </label>
+          <select class="form-select" formControlName="features" multiple>
+            <option *ngFor="let feature of propertyFeaturesList" [value]="feature.value">
+              {{ feature.label }}
+            </option>
+          </select>
+          <small class="text-muted">
+            Hold Ctrl (Windows) or Cmd (Mac) to select multiple features.<br>
+            اضغط مع الاستمرار على Ctrl (ويندوز) أو Cmd (ماك) لاختيار عدة مميزات.
+          </small>
+        </div>
+          </div>
+        </div>
+
+        <div class="card mb-4 create-listing-card" *ngIf="listingForm.get('propertyCategory')?.value === 'Land'">
+          <div class="card-header bg-primary text-white">
+            {{ language === 'en' ? 'Land Details' : 'تفاصيل الأرض' }}
+          </div>
+          <div class="card-body">
+            <div class="row g-3">
+              <div class="col-md-3">
+                <label class="form-label">
+                  {{ language === 'en' ? 'Land Frontage' : 'واجهة الأرض' }}
+                </label>
+                <input type="text" class="form-control" formControlName="landFrontage" placeholder="Enter frontage in meters (أدخل الواجهة بالمتر)">
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">
+                  {{ language === 'en' ? 'Land Depth' : 'عمق الأرض' }}
+                </label>
+                <input type="text" class="form-control" formControlName="landDepth" placeholder="Enter depth in meters (أدخل العمق بالمتر)">
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">
+                  {{ language === 'en' ? 'Land Area' : 'مساحة الأرض' }}
+                </label>
+                <input type="text" class="form-control" formControlName="landArea" placeholder="">
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">
+                  {{ language === 'en' ? 'Facade' : 'الواجهة' }}
+                </label>
+                <select class="form-select" formControlName="facade">
+                  <option value="" disabled selected>
+                    {{ language === 'en' ? 'Select facade' : 'اختر اتجاه الواجهة' }}
+                  </option>
+                  <option value="North">
+                    {{ language === 'en' ? 'North' : 'شمال' }}
+                  </option>
+                  <option value="South">
+                    {{ language === 'en' ? 'South' : 'جنوب' }}
+                  </option>
+                  <option value="East">
+                    {{ language === 'en' ? 'East' : 'شرق' }}
+                  </option>
+                  <option value="West">
+                    {{ language === 'en' ? 'West' : 'غرب' }}
+                  </option>
+                </select>
+              </div>
+
+
+ 
+
+
+            </div>
+          </div>
+        </div>
+
+        <!-- Room Details -->
+        <div class="card mb-4 create-listing-card"   *ngIf="listingForm.get('propertyCategory')?.value === 'Residential' ">
+          <div class="card-header bg-primary text-white">
+            {{ language === 'en' ? 'Room Details' : 'تفاصيل الغرف' }}
+          </div>
+          <div class="card-body">
+            <div formArrayName="rooms">
+              <div *ngFor="let room of rooms.controls; let i = index" [formGroupName]="i" class="row align-items-end g-3 mb-3">
+                <div class="col-md-3">
+                  <label class="form-label">
+                    {{ language === 'en' ? 'Room Name' : 'اسم الغرفة' }}
+                  </label>
+                  <input type="text" class="form-control" formControlName="name" required>
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label">
+                    {{ language === 'en' ? 'Size' : 'المساحة' }}
+                    <span class="text-muted" style="font-size: 0.7em;">
+                      (e.g.  "6.8 x 5.9 m" )
+                    </span>
+                  </label>
+                  <input type="text" class="form-control" formControlName="size" required>
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label">
+                    {{ language === 'en' ? 'Level' : 'الطابق' }}
+                  </label>
+                  <input type="text" class="form-control" formControlName="level" required>
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label">
+                    {{ language === 'en' ? 'Room Features' : 'مميزات الغرفة' }}
+                  </label>
+                  <input type="text" class="form-control" formControlName="roomFeature" placeholder="Room features (مميزات الغرفة)">
+                </div>
+                <div class="col-md-12 text-end">
+                  <button type="button" class="btn btn-danger btn-sm" (click)="removeRoom(i)">
+                    {{ language === 'en' ? 'Remove Room' : 'إزالة الغرفة' }}
+                  </button>
+                </div>
+              </div>
+              <button type="button" class="btn btn-primary" (click)="addRoom()">
+                {{ language === 'en' ? 'Add Room' : 'إضافة غرفة' }}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Utilities & Features -->
+        <div class="card mb-4 create-listing-card" *ngIf="listingForm.get('propertyCategory')?.value == 'Residential'">
+          <div class="card-header bg-primary text-white">
+            {{ language === 'en' ? 'Utilities & Features' : 'المرافق والمميزات' }}
+          </div>
+          <div class="card-body row g-3">
+            <div class="col-md-4">
+              <label class="form-label">
+                {{ language === 'en' ? 'Water Supply' : 'مصدر المياه' }}
+              </label>
+              <select class="form-select" formControlName="waterSupply" [required]="listingForm.get('propertyCategory')?.value === 'Residential'">
+                <option value="" disabled selected>
+                  {{ language === 'en' ? 'Select Water Supply' : 'اختر مصدر المياه' }}
+                </option>
+                <option value="Municipal">
+                  {{ language === 'en' ? 'Municipal' : 'بلدي' }}
+                </option>
+                <option value="Well">
+                  {{ language === 'en' ? 'Well' : 'بئر' }}
+                </option>
+                <option value="Tank">
+                  {{ language === 'en' ? 'Tank' : 'خزان' }}
+                </option>
+                <option value="Spring">
+                  {{ language === 'en' ? 'Spring' : 'نبع' }}
+                </option>
+                <option value="Shared">
+                  {{ language === 'en' ? 'Shared' : 'مشترك' }}
+                </option>
+                <option value="None">
+                  {{ language === 'en' ? 'None' : 'لا يوجد' }}
+                </option>
+                <option value="Other">
+                  {{ language === 'en' ? 'Other' : 'أخرى' }}
+                </option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">
+                {{ language === 'en' ? 'Heating Type' : 'نوع التدفئة' }}
+              </label>
+              <select class="form-select" formControlName="heatingType">
+                <option value="" disabled selected>
+                  {{ language === 'en' ? 'Select Heating Type' : 'اختر نوع التدفئة' }}
+                </option>
+                <option value="Central">
+                  {{ language === 'en' ? 'Central' : 'مركزي' }}
+                </option>
+                <option value="Gas">
+                  {{ language === 'en' ? 'Gas' : 'غاز' }}
+                </option>
+                <option value="Electric">
+                  {{ language === 'en' ? 'Electric' : 'كهرباء' }}
+                </option>
+                <option value="Solar">
+                  {{ language === 'en' ? 'Solar' : 'شمسي' }}
+                </option>
+                <option value="Diesel">
+                  {{ language === 'en' ? 'Diesel' : 'ديزل' }}
+                </option>
+                <option value="Fireplace">
+                  {{ language === 'en' ? 'Fireplace' : 'مدفأة' }}
+                </option>
+                <option value="None">
+                  {{ language === 'en' ? 'None' : 'لا يوجد' }}
+                </option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">
+                {{ language === 'en' ? 'Cooling Type' : 'نوع التبريد' }}
+              </label>
+              <select class="form-select" formControlName="coolingType">
+                <option value="" disabled selected>
+                  {{ language === 'en' ? 'Select Cooling Type' : 'اختر نوع التبريد' }}
+                </option>
+                <option value="Central">
+                  {{ language === 'en' ? 'Central' : 'مركزي' }}
+                </option>
+                <option value="Split Unit">
+                  {{ language === 'en' ? 'Split Unit' : 'وحدة منفصلة' }}
+                </option>
+                <option value="Window Unit">
+                  {{ language === 'en' ? 'Window Unit' : 'وحدة نافذة' }}
+                </option>
+                <option value="Evaporative">
+                  {{ language === 'en' ? 'Evaporative' : 'تبخيري' }}
+                </option>
+                <option value="Fan">
+                  {{ language === 'en' ? 'Fan' : 'مروحة' }}
+                </option>
+                <option value="None">
+                  {{ language === 'en' ? 'None' : 'لا يوجد' }}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Description & Photo -->
+        <div class="card mb-4 create-listing-card">
+          <div class="card-header bg-primary text-white">
+            {{ language === 'en' ? 'Description & Photo' : 'الوصف والصورة' }}
+          </div>
+          <div class="card-body row g-3">
+            <div class="mb-3">
+              <label for="description" class="form-label">
+                {{ language === 'en' ? 'Description (English)' : 'الوصف بالإنجليزية' }}
+              </label>
+              <textarea id="description" class="form-control" formControlName="description" rows="3"></textarea>
+            </div>
+            <div class="mb-3">
+              <label for="descriptionAr" class="form-label">
+                {{ language === 'en' ? 'Description (Arabic)' : 'الوصف بالعربية' }}
+              </label>
+              <textarea id="descriptionAr" class="form-control" formControlName="descriptionAr" rows="3" dir="rtl"></textarea>
+            </div>
+            <div class="col-md-12">
+              <label class="form-label">
+                {{ language === 'en' ? 'Virtual Tour URL' : 'رابط الجولة الافتراضية' }}
+              </label>
+              <input type="text" class="form-control" formControlName="virtualTourUrl">
+            </div>
+            <div class="col-md-12">
+              <label class="form-label">
+                {{ language === 'en' ? 'Upload Photos (max 10)' : 'رفع الصور (حد أقصى ١٠)' }}
+              </label>
+              <input type="file" multiple (change)="onPhotosSelected($event)" accept="image/*" class="form-control mb-2">
+              <div class="row">
+                <div class="col-md-3 mb-2" *ngFor="let preview of photoPreviews; let i = index">
+                  <div class="card">
+                    <img [src]="preview" class="card-img-top" alt="Photo Preview (معاينة الصورة)">
+                    <div class="card-body p-2">
+                      <div class="form-check">
+                        <input class="form-check-input" type="radio" name="mainPhoto" [checked]="isMainPhoto(i)" (change)="setMainPhoto(i)">
+                        <label class="form-check-label">
+                          {{ language === 'en' ? 'Main Photo' : 'الصورة الرئيسية' }}
+                        </label>
+                      </div>
+                      <button type="button" class="btn btn-danger btn-sm mt-2" (click)="removePhoto(i)">
+                        {{ language === 'en' ? 'Remove' : 'إزالة' }}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn create-listing-btn">
+          {{ language === 'en' ? 'Create Listing' : 'إنشاء إعلان' }}
+        </button>
+      </form>
+      <div *ngIf="success" class="alert alert-success mt-3">
+        {{ language === 'en' ? 'Listing created successfully!' : 'تم إنشاء الإعلان بنجاح!' }}
+      </div>
+    </div>
+  </div>
+</div>

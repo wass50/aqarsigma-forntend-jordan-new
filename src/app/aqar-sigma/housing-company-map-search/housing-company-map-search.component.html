@@ -1,0 +1,94 @@
+<div *ngIf="!(selectedProperty && showDetails && propertyDetailsInlineMode)" class="row mb-4">
+  <div class="col-auto ps-4" style="padding-left: 32px;">
+    <select class="form-select form-select-sm border-info" [(ngModel)]="propertyTypeFilter" (ngModelChange)="applyFilters()">
+      <option value="">{{ language === 'en' ? 'All Property Types' : 'كل أنواع العقارات' }}</option>
+      <option value="Apartment">{{ language === 'en' ? 'Apartment' : 'شقة' }}</option>
+      <option value="Villa">{{ language === 'en' ? 'Villa' : 'فيلا' }}</option>
+      <!-- Add more types as needed (use language-aware labels) -->
+    </select>
+  </div>
+  <div class="col-auto ps-4">
+    <select class="form-select form-select-sm border-info" [(ngModel)]="housingCompanyFilter" (ngModelChange)="applyFilters()">
+      <option value="">{{ language === 'en' ? 'All Housing Companies' : 'كل الشركات السكنية' }}</option>
+      <option *ngFor="let hc of filteredHousingCompanies" [value]="hc.id">
+        {{ language === 'en' ? (hc.nameEn || hc.companyName || hc.name) : (hc.nameAr || hc.companyName || hc.name) }}
+      </option>
+    </select>
+  </div>
+
+  <div class="col-auto ps-4">
+    <select class="form-select form-select-sm"
+            [(ngModel)]="cityFilter"
+            (change)="applyFilters()"
+            style="min-width:160px;">
+      <option value="">{{ language === 'en' ? 'All Cities' : 'جميع المدن' }}</option>
+      <option *ngFor="let c of dropDownCities" [value]="c.id">
+        {{ language === 'en' ? (c.nameEn || c.nameAr) : (c.nameAr || c.nameEn) }}
+      </option>
+    </select>
+  </div>
+  <div class="col-auto ps-4">
+    <select class="form-select form-select-sm"
+            [(ngModel)]="districtFilter"
+            (change)="onDistrictChange($event)"
+            style="min-width:160px;">
+      <option value="">{{ language === 'en' ? 'All Districts' : 'كل المناطق' }}</option>
+      <option *ngFor="let d of dropDownDistricts" [value]="d.id">
+        {{ language === 'en' ? (d.nameEn || d.nameAr ) : (d.nameAr || d.nameEn) }}
+      </option>
+    </select>
+  </div>
+
+  <div class="col-auto">
+  <div *ngIf="isAdmin" class="btn-group position-relative">
+    <button
+      type="button"
+      class="btn btn-outline-primary btn-sm"
+      [class.active]="selectedStatus === 'Pending'"
+      (click)="setPendingStatus()"
+    >
+      Pending (قيد الانتظار)
+    </button>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+
+<div *ngIf="selectedProperty && showDetails && propertyDetailsInlineMode" class="property-details-inline">
+  <div class="d-flex justify-content-start mb-2">
+    <button class="btn btn-secondary" (click)="closeDetails()">← {{ language === 'en' ? 'Back to map' : 'العودة للخريطة' }}</button>
+  </div>
+
+ <app-housing-company-listing-details
+    [property]="selectedProperty"
+    (propertyActivated)="onPropertyActivated($event)"
+    (close)="closeDetails()">
+  </app-housing-company-listing-details>
+</div>
+
+
+<div id="map" [hidden]="selectedProperty && showDetails && propertyDetailsInlineMode" style="width:100%; height:400px;"></div>
+
+
+
+<div *ngIf="selectedProperty && showDetails && !propertyDetailsInlineMode" class="modal-backdrop-custom">
+  <div class="modal-custom">
+    <app-housing-company-listing-details
+      [property]="selectedProperty"
+      (propertyActivated)="onPropertyActivated($event)"
+      (close)="showDetails = false">
+    </app-housing-company-listing-details>
+  </div>
+</div>

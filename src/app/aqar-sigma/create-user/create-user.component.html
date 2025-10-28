@@ -1,0 +1,71 @@
+<div class="container mt-5">
+  <h2>
+    {{ language === 'en' ? 'Create New User' : 'إنشاء مستخدم جديد' }}
+  </h2>
+  <form #userForm="ngForm" (ngSubmit)="createUser()">
+    <input
+      type="text"
+      class="form-control mb-2"
+      [(ngModel)]="firstName"
+      name="firstName"
+      required
+      [placeholder]="language === 'en' ? 'First Name' : 'الاسم الأول'"
+    >
+    <input
+      type="text"
+      class="form-control mb-2"
+      [(ngModel)]="lastName"
+      name="lastName"
+      required
+      [placeholder]="language === 'en' ? 'Last Name' : 'اسم العائلة'"
+    >
+    <input
+      type="text"
+      [(ngModel)]="username"
+      name="username"
+      required
+      class="form-control mb-2"
+      [placeholder]="language === 'en' ? 'Username' : 'اسم المستخدم'"
+    >
+    <input
+      type="password"
+      [(ngModel)]="password"
+      name="password"
+      required
+      class="form-control mb-2"
+      [placeholder]="language === 'en' ? 'Password' : 'كلمة المرور'"
+    >
+    <input
+      type="email"
+      [(ngModel)]="email"
+      name="email"
+      required
+      email
+      class="form-control mb-2"
+      [placeholder]="language === 'en' ? 'Contact Email' : 'البريد الإلكتروني'"
+      #emailField="ngModel"
+    >
+    <div *ngIf="emailField.invalid && emailField.touched" class="text-danger mb-2">
+      {{ language === 'en' ? 'Please enter a valid email address.' : 'يرجى إدخال بريد إلكتروني صحيح.' }}
+    </div>
+    <input
+      type="text"
+      [(ngModel)]="phone"
+      name="phone"
+      required
+      class="form-control mb-2"
+      [placeholder]="language === 'en' ? 'Contact Phone Number' : 'رقم الهاتف'"
+    >
+    <div class="d-flex justify-content-center pb-5">
+      <button type="submit" class="btn btn-primary" [disabled]="userForm.invalid">
+        {{ language === 'en' ? 'Create User' : 'إنشاء مستخدم' }}
+      </button>
+    </div>
+  </form>
+  <div *ngIf="success" class="alert alert-success mt-2">
+    {{ language === 'en' ? 'Account created! You can now log in.' : 'تم إنشاء الحساب! يمكنك الآن تسجيل الدخول.' }}
+  </div>
+  <div *ngIf="errorMsg" class="alert alert-danger mt-3 text-center py-2">
+    {{ errorMsg }}
+  </div>
+</div>
